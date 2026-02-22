@@ -1,5 +1,7 @@
 <Solution>
-  <Project Path="Console/Console.csproj" />
+  <Project Path="Console/Console.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="GUI/GUI.csproj" Id="0d327e54-67a2-44d1-8afd-5aeb250a7dd7" />
   <Project Path="Picross/Picross.csproj" />
 </Solution>

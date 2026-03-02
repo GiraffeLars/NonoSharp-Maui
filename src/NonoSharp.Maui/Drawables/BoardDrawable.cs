@@ -7,6 +7,7 @@ internal class BoardDrawable : IDrawable
 {
     private GameAPI game;
     private float cellSize;
+    internal bool filling = true;
 
     public BoardDrawable(GameAPI game)
     {
@@ -24,7 +25,7 @@ internal class BoardDrawable : IDrawable
 
     private void DrawSquares(ICanvas canvas)
     {
-        canvas.FillColor = Colors.Black;
+        canvas.FillColor = game.IsPuzzleSolved() ? Colors.Green : Colors.Black;
         canvas.StrokeColor = Colors.Black;
         canvas.StrokeSize = 4;
 
@@ -113,17 +114,17 @@ internal class BoardDrawable : IDrawable
 
     private void HandleClickFilledSquare(int x, int y)
     {
-        //if (but == MouseButtons.Right)
-        //{
-        //    game.CrossCell(x, y);
-        //    return;
-        //}
+        if (!filling)
+        {
+            game.CrossCell(x, y);
+            return;
+        }
 
-        //if (but == MouseButtons.Left && game.IsSquareEmpty(x, y))
-        //{
-        //    game.FillCell(x, y);
-        //    return;
-        //}
+        if (game.IsSquareEmpty(x, y))
+        {
+            game.FillCell(x, y);
+            return;
+        }
 
         // For all other mouse clicks we empty the cell
         game.EmptyCell(x, y);
@@ -131,17 +132,17 @@ internal class BoardDrawable : IDrawable
 
     private void HandleClickCrossedSquare(int x, int y)
     {
-        //if (but == MouseButtons.Left)
-        //{
-        //    game.FillCell(x, y);
-        //    return;
-        //}
+        if (filling)
+        {
+            game.FillCell(x, y);
+            return;
+        }
 
-        //if (but == MouseButtons.Right && game.IsSquareEmpty(x, y))
-        //{
-        //    game.CrossCell(x, y);
-        //    return;
-        //}
+        if (game.IsSquareEmpty(x, y))
+        {
+            game.CrossCell(x, y);
+            return;
+        }
 
         // For all other mouse clicks we empty the cell
         game.EmptyCell(x, y);
@@ -149,17 +150,17 @@ internal class BoardDrawable : IDrawable
 
     private void HandleClickEmptySquare(int x, int y)
     {
-        //if (but == MouseButtons.Left)
-        //{
-        //    game.FillCell(x, y);
-        //    return;
-        //}
+        if (filling)
+        {
+            game.FillCell(x, y);
+            return;
+        }
 
-        //if (but == MouseButtons.Right)
-        //{
-        //    game.CrossCell(x, y);
-        //    return;
-        //}
+        if (!filling)
+        {
+            game.CrossCell(x, y);
+            return;
+        }
 
         game.FillCell(x, y);
 

@@ -1,10 +1,21 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="Tests" />
+  </Configurations>
   <Project Path="Console/Console.csproj">
     <Build Solution="Debug|*" Project="false" />
+    <Build Solution="Tests|*" Project="false" />
   </Project>
-  <Project Path="GUI/WinForms.csproj" Id="0d327e54-67a2-44d1-8afd-5aeb250a7dd7" />
+  <Project Path="Core.UnitTests/Core.UnitTests.csproj" Id="74a9d335-a696-4a68-86e8-a69356e548e2" />
+  <Project Path="GUI/WinForms.csproj" Id="0d327e54-67a2-44d1-8afd-5aeb250a7dd7">
+    <BuildType Solution="Tests|*" Project="Release" />
+    <Build Solution="Tests|*" Project="false" />
+  </Project>
   <Project Path="Maui/Maui.csproj" Id="f8824bdc-dee1-44fd-ac95-243e1e9242bc">
-    <Deploy Solution="Debug|*" />
+    <Build Solution="Tests|*" Project="false" />
+    <Deploy />
   </Project>
   <Project Path="Picross/Core.csproj" />
 </Solution>

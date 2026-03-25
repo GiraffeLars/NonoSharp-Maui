@@ -24,13 +24,13 @@ namespace Maui.Drawables
                 for (int x = hints.Count - 1; x >= 0; x--)
                 {
                     Hint hint = hints.GetHint(x);
-                    canvas.FontColor = hint.completed ? Colors.Gray : Colors.Black;
+                    canvas.FontColor = hint.Completed ? Colors.Gray : Colors.Black;
 
                     float xPos = dirtyRect.Width - (hints.Count - x) * 10;
                     float yPos = y * colHeight;
 
                     canvas.DrawString(
-                        hint.number.ToString(),
+                        hint.Number.ToString(),
                         xPos,
                         yPos,
                         colHeight,

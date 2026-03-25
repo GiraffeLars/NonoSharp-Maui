@@ -25,10 +25,10 @@ namespace Maui.Drawables
                 for (int y = hints.Count - 1; y >= 0; y--)
                 {
                     Hint hint = hints.GetHint(y);
-                    canvas.FontColor = hint.completed ? Colors.Gray : Colors.Black;
+                    canvas.FontColor = hint.Completed ? Colors.Gray : Colors.Black;
 
                     canvas.DrawString(
-                        hint.number.ToString(),
+                        hint.Number.ToString(),
                         colWidth * x,
                         dirtyRect.Height - (hints.Count - y) * 15 - 5,
                         colWidth,

@@ -11,6 +11,7 @@
   <Project Path="Core.UnitTests/Core.UnitTests.csproj" Id="74a9d335-a696-4a68-86e8-a69356e548e2">
     <Build Solution="Debug|*" Project="false" />
   </Project>
+  <Project Path="Core/Core.csproj" />
   <Project Path="GUI/WinForms.csproj" Id="0d327e54-67a2-44d1-8afd-5aeb250a7dd7">
     <BuildType Solution="Tests|*" Project="Release" />
     <Build Solution="Tests|*" Project="false" />
@@ -19,5 +20,4 @@
     <Build Solution="Tests|*" Project="false" />
     <Deploy />
   </Project>
-  <Project Path="Picross/Core.csproj" />
 </Solution>

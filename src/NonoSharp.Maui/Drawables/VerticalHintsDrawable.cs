@@ -8,6 +8,8 @@ namespace Maui.Drawables
     internal class VerticalHintsDrawable : IDrawable
     {
         private GameAPI game;
+        internal static int NUMBER_HEIGHT = 20;
+        internal static int NUMBER_OFFSET = 15;
 
         internal VerticalHintsDrawable(GameAPI game)
         {
@@ -30,9 +32,9 @@ namespace Maui.Drawables
                     canvas.DrawString(
                         hint.Number.ToString(),
                         colWidth * x,
-                        dirtyRect.Height - (hints.Count - y) * 15 - 5,
+                        dirtyRect.Height - (hints.Count - y) * NUMBER_OFFSET - 5,
                         colWidth,
-                        20,
+                        NUMBER_HEIGHT,
                         HorizontalAlignment.Center,
                         VerticalAlignment.Center);
                 }

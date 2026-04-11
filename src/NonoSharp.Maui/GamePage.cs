@@ -14,8 +14,12 @@ public class GamePage : ContentPage
     private GraphicsView verticalHintsView;
     private GraphicsView horizontalHintsView;
     private BoardDrawable boardDrawable;
-    private int horizontalHintSpace; // The space required for the horizontal hints
-    private int verticalHintSpace; // The space required for the horizontal hints
+    private VerticalHintsDrawable verticalHintsDrawable;
+    private HorizontalHintsDrawable horizontalHintsDrawable;
+
+    private const int BUTTON_HEIGHT = 50;
+    private const int BUTTON_MARGIN = 10;
+    private const float BOARD_SCREEN_PERCENTAGE = 0.75f;
 
     private int maxHorizontalHints; // The greatest number of horizontal hints in a row
     private int maxVerticalHints; // The greatest number of vertical hints in a column
@@ -26,7 +30,6 @@ public class GamePage : ContentPage
     public GamePage(int width, int height)
     {
         game = new GameAPI(width, height);
-        boardDrawable = new BoardDrawable(game);
 
         FillHintData();
         CreateViews();
@@ -35,25 +38,48 @@ public class GamePage : ContentPage
         Content = mainGrid;
     }
 
-    // Dynamically constrain the Grid so the board's row and column remain perfectly square
+    /// <summary>
+    /// Dynamically calculates the screen space for the grid and hints.
+    /// </summary>
+    /// Uses the screen size to calculate the grid size with <c>BOARD_SCREEN_PERCENTAGE</c>
+    /// Calculates the width and height for the hint views, then lets the drawables calculated the total used space
+    /// Using that, finalize the drawing.
+    /// <param name="width">Screen width</param>
+    /// <param name="height">Screen height</param>
     protected override void OnSizeAllocated(double width, double height)
     {
         base.OnSizeAllocated(width, height);
 
-        if (width > 0 && height > 0)
+        // Check for valid width and height
+        if (width <= 0 || height <= 0)
         {
-            // Subtract the hint margins to find the maximum possible board space
-            double availableWidth = width - horizontalHintSpace - 10;
-            double availableHeight = height - verticalHintSpace * maxVerticalHints - verticalHintSpace;
-
-            // The board needs to be a square, so we take the smaller of the two dimensions
-            double boardSize = Math.Min(availableWidth, availableHeight);
-
-            // Force the grid row and column to use this exact size. 
-            // This ensures horizontalHintsView.Height EXACTLY matches boardView's drawn height.
-            mainGrid.RowDefinitions[1].Height = new GridLength(boardSize);
-            mainGrid.ColumnDefinitions[1].Width = new GridLength(boardSize);
+            return;
         }
+
+        // Calculate the allocated board size & set the request
+        double boardSize = Math.Min(width, height) * BOARD_SCREEN_PERCENTAGE;
+
+        boardView.HeightRequest = boardSize;
+        boardView.WidthRequest = boardSize;
+
+        double buttonSize = BUTTON_HEIGHT + BUTTON_MARGIN * 2; // margin * 2 as margin is 10 px on both 
+        double availableHintHeight = height - boardSize - buttonSize;
+        double availableHintWidth = width - boardSize;
+
+        // Set the hint spacing and calculate required width/height to ensure grid centering
+        verticalHintsDrawable.SetAvailableSize(boardSize, availableHintHeight, maxVerticalHints);
+        horizontalHintsDrawable.SetAvailableSize(availableHintWidth, boardSize, maxHorizontalHints);
+
+        // Give the hints their allocated screen space
+        verticalHintsView.HeightRequest = verticalHintsDrawable.RequiredHeight;
+        verticalHintsView.WidthRequest = boardSize;
+
+        horizontalHintsView.HeightRequest = boardSize;
+        horizontalHintsView.WidthRequest = horizontalHintsDrawable.RequiredWidth;
+
+        boardView.Invalidate();
+        verticalHintsView.Invalidate();
+        horizontalHintsView.Invalidate();
     }
 
     private int GetMaxHints(Hints[] hints)
@@ -79,9 +105,12 @@ public class GamePage : ContentPage
         maxVerticalHints = GetMaxHints(game.VerticalHints);
     }
 
-    [MemberNotNull(nameof(boardView), nameof(verticalHintsView), nameof(horizontalHintsView))]
+    [MemberNotNull(nameof(boardView), nameof(verticalHintsView), nameof(horizontalHintsView), nameof(verticalHintsDrawable), nameof(horizontalHintsDrawable))]
     private void CreateViews()
     {
+        boardDrawable = new BoardDrawable(game);
+        verticalHintsDrawable = new VerticalHintsDrawable(game);
+        horizontalHintsDrawable = new HorizontalHintsDrawable(game);
 
         boardView = new GraphicsView
         {
@@ -90,44 +119,45 @@ public class GamePage : ContentPage
 
         verticalHintsView = new GraphicsView
         {
-            Drawable = new VerticalHintsDrawable(game),
+            Drawable = verticalHintsDrawable,
         };
 
         horizontalHintsView = new GraphicsView
         {
-            Drawable = new HorizontalHintsDrawable(game)
+            Drawable = horizontalHintsDrawable
         };
 
         boardView.StartInteraction += OnBoardTouched;
     }
 
-    [MemberNotNull(nameof(mainGrid), nameof(verticalHintSpace), nameof(horizontalHintSpace))]
+    [MemberNotNull(nameof(mainGrid))]
     private void CreateMainGrid()
     {
-        horizontalHintSpace = 60;
         mainGrid = new Grid
         {
-            RowDefinitions =
-            {
-                new RowDefinition { Height = GridLength.Star },     // top hints row
-                new RowDefinition { Height = GridLength.Star },     // board row
-                new RowDefinition { Height = new GridLength(70) }      // Button
-            },
-            ColumnDefinitions =
-            {
-                new ColumnDefinition { Width = new GridLength(horizontalHintSpace) }, // left hints column
-                new ColumnDefinition { Width = GridLength.Star }     // board column
-            }
-        };
+            // This centers the entire grid structure on the page
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Center,
 
-        verticalHintSpace = VerticalHintsDrawable.NUMBER_HEIGHT + VerticalHintsDrawable.NUMBER_OFFSET;
+            RowDefinitions =
+        {
+            new RowDefinition { Height = GridLength.Auto },    // 0: Top hints
+            new RowDefinition { Height = GridLength.Auto },    // 1: Board
+            new RowDefinition { Height = GridLength.Auto }     // 2: Button
+        },
+            ColumnDefinitions =
+        {
+            new ColumnDefinition { Width = GridLength.Auto }, // 0: Left hints
+            new ColumnDefinition { Width = GridLength.Auto },                    // 1: Board
+        }
+        };
 
         // Controls button
         Button toggleButton = new Button
         {
             Text = "Mode: Fill",
-            Margin = new Thickness(10),
-            HeightRequest = 50,
+            Margin = new Thickness(BUTTON_MARGIN),
+            HeightRequest = BUTTON_HEIGHT,
             VerticalOptions = LayoutOptions.Start
         };
 

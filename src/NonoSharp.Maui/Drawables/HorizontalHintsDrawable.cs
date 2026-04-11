@@ -7,33 +7,57 @@ namespace Maui.Drawables
 {
     internal class HorizontalHintsDrawable : IDrawable
     {
-        private GameAPI game;
+        private readonly GameAPI game;
+
+        // The total amount of space a number needs, includes the margin, like a box
+        private float numberOffset = 22f;
+
+        // The required Width needed for all the hints. When used in GamePage, this ensures the grid is centered
+        internal float RequiredWidth { get; private set; }
 
         internal HorizontalHintsDrawable(GameAPI game)
         {
             this.game = game;
         }
 
+        /// <summary>
+        /// Sets the available spacing for the vertical hints. Also sets <c>this.RequiredWidth</c>.
+        /// </summary>
+        /// <param name="totalWidth">Total width available for the hints, as calculated in GamePage</param>
+        /// <param name="totalHeight">Total height available for the hints, as calculated in GamePage</param>
+        /// <param name="maxHints">Maximum amount of hints in any of the vertical hints</param>
+        internal void SetAvailableSize(double totalWidth, double totalHeight, int maxHints)
+        {
+            // Calculate spacing between numbers, but cap spacing so they are never too far apart
+            numberOffset = Math.Min((float)(totalWidth / maxHints), 22f);
+
+            RequiredWidth = numberOffset * maxHints;
+        }
+
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             float colHeight = dirtyRect.Height / game.Height;
+            float textWidth = numberOffset * 0.9f; // Use the number offset (i.e. the 'box' of each number) and take an arbitrary percentage
+
             for (int y = 0; y < game.Height; y++)
             {
                 Hints hints = game.HorizontalHints[y];
 
+                // Traverse backwards through the hint so that the last hint
+                // is almost touching the grid
                 for (int x = hints.Count - 1; x >= 0; x--)
                 {
                     Hint hint = hints.GetHint(x);
                     canvas.FontColor = hint.Completed ? Colors.Gray : Colors.Black;
 
-                    float xPos = dirtyRect.Width - (hints.Count - x) * 10;
+                    float xPos = dirtyRect.Width - (hints.Count - x) * numberOffset;
                     float yPos = y * colHeight;
 
                     canvas.DrawString(
                         hint.Number.ToString(),
                         xPos,
                         yPos,
-                        colHeight,
+                        textWidth,
                         colHeight,
                         HorizontalAlignment.Left,
                         VerticalAlignment.Center

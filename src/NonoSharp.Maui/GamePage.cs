@@ -24,7 +24,9 @@ public class GamePage : ContentPage
     private int maxHorizontalHints; // The greatest number of horizontal hints in a row
     private int maxVerticalHints; // The greatest number of vertical hints in a column
 
-    // 1. Give your grid a class-level scope so we can resize it later
+    private Button toggleButton;
+    private Button undoButton;
+
     private Grid mainGrid;
 
     public GamePage(int width, int height)
@@ -77,6 +79,14 @@ public class GamePage : ContentPage
         horizontalHintsView.HeightRequest = boardSize;
         horizontalHintsView.WidthRequest = horizontalHintsDrawable.RequiredWidth;
 
+        Invalidate();
+    }
+
+    /// <summary>
+    /// Invalidates all views
+    /// </summary>
+    private void Invalidate()
+    {
         boardView.Invalidate();
         verticalHintsView.Invalidate();
         horizontalHintsView.Invalidate();
@@ -152,8 +162,23 @@ public class GamePage : ContentPage
         }
         };
 
+        CreateToggleButton();
+        CreateUndoButton();
+
+        // Add children
+        mainGrid.Add(boardView, 1, 1);          // bottom-right
+        mainGrid.Add(verticalHintsView, 1, 0);  // top-right (above board)
+        mainGrid.Add(horizontalHintsView, 0, 1);// bottom-left (beside board)
+        mainGrid.Add(toggleButton, 1, 2);       // underneath the board
+        mainGrid.Add(undoButton, 0, 2);       // underneath left hints
+    }
+
+
+    [MemberNotNull(nameof(toggleButton))]
+    private void CreateToggleButton()
+    {
         // Controls button
-        Button toggleButton = new Button
+        toggleButton = new Button
         {
             Text = "Mode: Fill",
             Margin = new Thickness(BUTTON_MARGIN),
@@ -174,20 +199,42 @@ public class GamePage : ContentPage
                 toggleButton.Text = "Mode: Cross";
             }
         };
-
-        // Add children
-        mainGrid.Add(boardView, 1, 1);          // bottom-right
-        mainGrid.Add(verticalHintsView, 1, 0);  // top-right (above board)
-        mainGrid.Add(horizontalHintsView, 0, 1);// bottom-left (beside board)
-        mainGrid.Add(toggleButton, 1, 2);       // underneath the board
     }
+
+
+    [MemberNotNull(nameof(undoButton))]
+    private void CreateUndoButton()
+    {
+        // Controls button
+        undoButton = new Button
+        {
+            Text = "Undo",
+            Margin = new Thickness(BUTTON_MARGIN),
+            HeightRequest = BUTTON_HEIGHT,
+            VerticalOptions = LayoutOptions.Start,
+            IsEnabled = false
+        };
+
+        // When clicked
+        undoButton.Clicked += (sender, e) =>
+        {
+            game.Undo();
+            UpdateUndoButton();
+            Invalidate();
+        };
+    }
+
+    private void UpdateUndoButton()
+    {
+        undoButton.IsEnabled = game.CanUndo;
+    }
+
     private void OnBoardTouched(object sender, TouchEventArgs e)
     {
         var touch = e.Touches.First();
         boardDrawable.HandleTouch(touch.X, touch.Y);
 
-        boardView.Invalidate();
-        verticalHintsView.Invalidate();
-        horizontalHintsView.Invalidate();
+        UpdateUndoButton();
+        Invalidate();
     }
 }

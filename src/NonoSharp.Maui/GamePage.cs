@@ -1,11 +1,11 @@
-using Core;
-using Maui.Drawables;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
+using Picross.Game;
+using Picross.Maui.Drawables;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Maui;
+namespace Picross.Maui;
 
 public class GamePage : ContentPage
 {

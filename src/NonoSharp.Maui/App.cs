@@ -1,7 +1,6 @@
-﻿using Maui;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 
-namespace Maui;
+namespace Picross.Maui;
 
 public class App : Application
 {

@@ -1,9 +1,9 @@
-﻿using Core;
+﻿using Picross.Game;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Maui.Drawables
+namespace Picross.Maui.Drawables
 {
     internal class VerticalHintsDrawable : IDrawable
     {

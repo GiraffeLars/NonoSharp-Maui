@@ -1,6 +1,7 @@
 ﻿using Foundation;
+using Picross.Maui;
 
-namespace Maui
+namespace Picross.Maui.Platforms.MacCatalyst
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

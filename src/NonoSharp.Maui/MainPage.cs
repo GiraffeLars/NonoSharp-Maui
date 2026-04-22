@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Maui;
+namespace Picross.Maui;
 
 public class MainPage : ContentPage
 {

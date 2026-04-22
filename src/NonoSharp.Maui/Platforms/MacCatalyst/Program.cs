@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace Maui
+namespace Picross.Maui.Platforms.MacCatalyst
 {
     public class Program
     {

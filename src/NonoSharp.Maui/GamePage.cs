@@ -25,7 +25,10 @@ public class GamePage : ContentPage
     private int maxVerticalHints; // The greatest number of vertical hints in a column
 
     private Button toggleButton;
+
+    private Grid commandButtonsGrid;
     private Button undoButton;
+    private Button redoButton;
 
     private Grid mainGrid;
 
@@ -78,14 +81,17 @@ public class GamePage : ContentPage
 
         horizontalHintsView.HeightRequest = boardSize;
         horizontalHintsView.WidthRequest = horizontalHintsDrawable.RequiredWidth;
+        commandButtonsGrid.WidthRequest = horizontalHintsDrawable.RequiredWidth;
+        undoButton.WidthRequest = horizontalHintsDrawable.RequiredWidth / 2;
+        redoButton.WidthRequest = horizontalHintsDrawable.RequiredWidth / 2;
 
-        Invalidate();
+        InvalidateViews();
     }
 
     /// <summary>
     /// Invalidates all views
     /// </summary>
-    private void Invalidate()
+    private void InvalidateViews()
     {
         boardView.Invalidate();
         verticalHintsView.Invalidate();
@@ -163,14 +169,14 @@ public class GamePage : ContentPage
         };
 
         CreateToggleButton();
-        CreateUndoButton();
+        CreateCommandButtons();
 
         // Add children
         mainGrid.Add(boardView, 1, 1);          // bottom-right
         mainGrid.Add(verticalHintsView, 1, 0);  // top-right (above board)
         mainGrid.Add(horizontalHintsView, 0, 1);// bottom-left (beside board)
         mainGrid.Add(toggleButton, 1, 2);       // underneath the board
-        mainGrid.Add(undoButton, 0, 2);       // underneath left hints
+        mainGrid.Add(commandButtonsGrid, 0, 2);       // underneath left hints
     }
 
 
@@ -202,15 +208,25 @@ public class GamePage : ContentPage
     }
 
 
-    [MemberNotNull(nameof(undoButton))]
-    private void CreateUndoButton()
+    [MemberNotNull(nameof(undoButton), nameof(redoButton), nameof(commandButtonsGrid))]
+    private void CreateCommandButtons()
     {
-        // Controls button
+        commandButtonsGrid = new Grid
+        {
+            ColumnDefinitions =
+            {
+                new ColumnDefinition { Width = GridLength.Auto },
+                new ColumnDefinition { Width = GridLength.Auto }
+            }
+        };
+
+        // Undo button
         undoButton = new Button
         {
             Text = "Undo",
-            Margin = new Thickness(BUTTON_MARGIN),
+            Margin = new Thickness(0, BUTTON_MARGIN),
             HeightRequest = BUTTON_HEIGHT,
+            //WidthRequest = 20,
             VerticalOptions = LayoutOptions.Start,
             IsEnabled = false
         };
@@ -219,14 +235,37 @@ public class GamePage : ContentPage
         undoButton.Clicked += (sender, e) =>
         {
             game.Undo();
-            UpdateUndoButton();
-            Invalidate();
+            UpdateCommandButtons();
+            InvalidateViews();
         };
+
+        // Redo
+        redoButton = new Button
+        {
+            Text = "Redo",
+            Margin = new Thickness(0, BUTTON_MARGIN),
+            HeightRequest = BUTTON_HEIGHT,
+            //WidthRequest = 20,
+            VerticalOptions = LayoutOptions.Start,
+            IsEnabled = false
+        };
+
+        // When clicked
+        redoButton.Clicked += (sender, e) =>
+        {
+            game.Redo();
+            UpdateCommandButtons();
+            InvalidateViews();
+        };
+
+        commandButtonsGrid.Add(undoButton, 0, 0);
+        commandButtonsGrid.Add(redoButton, 1, 0);
     }
 
-    private void UpdateUndoButton()
+    private void UpdateCommandButtons()
     {
         undoButton.IsEnabled = game.CanUndo;
+        redoButton.IsEnabled = game.CanRedo;
     }
 
     private void OnBoardTouched(object sender, TouchEventArgs e)
@@ -234,7 +273,7 @@ public class GamePage : ContentPage
         var touch = e.Touches.First();
         boardDrawable.HandleTouch(touch.X, touch.Y);
 
-        UpdateUndoButton();
-        Invalidate();
+        UpdateCommandButtons();
+        InvalidateViews();
     }
 }

@@ -25,18 +25,29 @@ public class GamePage : ContentPage
     private int maxVerticalHints; // The greatest number of vertical hints in a column
 
     private Button toggleButton;
-
     private Grid commandButtonsGrid;
     private Button undoButton;
     private Button redoButton;
 
     private Grid mainGrid;
 
+    // Used for dragging across the board. HashSet uses (int, int) to represent cell (x, y)-coordinates.
+    // Do not use Point, due to the representation of X and Y being in double.
+    private HashSet<(int, int)> visitedCells = new();
+    private bool isDragging;
+    private DragMovement movementDirection;
+
+    // Cell where the first touch of this movement occured
+    private Point startingCell;
+
     public GamePage(int width, int height)
     {
         game = new GameAPI(width, height);
 
         FillHintData();
+
+        CreateToggleButton();
+        CreateCommandButtons();
         CreateViews();
         CreateMainGrid();
 
@@ -121,7 +132,8 @@ public class GamePage : ContentPage
         maxVerticalHints = GetMaxHints(game.VerticalHints);
     }
 
-    [MemberNotNull(nameof(boardView), nameof(verticalHintsView), nameof(horizontalHintsView), nameof(verticalHintsDrawable), nameof(horizontalHintsDrawable))]
+    [MemberNotNull(nameof(boardView), nameof(boardDrawable), nameof(verticalHintsView), 
+        nameof(horizontalHintsView), nameof(verticalHintsDrawable), nameof(horizontalHintsDrawable))]
     private void CreateViews()
     {
         boardDrawable = new BoardDrawable(game);
@@ -143,7 +155,9 @@ public class GamePage : ContentPage
             Drawable = horizontalHintsDrawable
         };
 
-        boardView.StartInteraction += OnBoardTouched;
+        boardView.StartInteraction += OnTouchStart;
+        boardView.DragInteraction += OnTouchMove;
+        boardView.EndInteraction += OnTouchEnd;
     }
 
     [MemberNotNull(nameof(mainGrid))]
@@ -159,17 +173,14 @@ public class GamePage : ContentPage
         {
             new RowDefinition { Height = GridLength.Auto },    // 0: Top hints
             new RowDefinition { Height = GridLength.Auto },    // 1: Board
-            new RowDefinition { Height = GridLength.Auto }     // 2: Button
+            new RowDefinition { Height = GridLength.Auto }     // 2: Mode button
         },
             ColumnDefinitions =
         {
-            new ColumnDefinition { Width = GridLength.Auto }, // 0: Left hints
+            new ColumnDefinition { Width = GridLength.Auto }, // 0: Left hints & undo, redo buttons
             new ColumnDefinition { Width = GridLength.Auto },                    // 1: Board
         }
         };
-
-        CreateToggleButton();
-        CreateCommandButtons();
 
         // Add children
         mainGrid.Add(boardView, 1, 1);          // bottom-right
@@ -186,7 +197,7 @@ public class GamePage : ContentPage
         // Controls button
         toggleButton = new Button
         {
-            Text = "Mode: Fill",
+            Text = "Mode: FILL",
             Margin = new Thickness(BUTTON_MARGIN),
             HeightRequest = BUTTON_HEIGHT,
             VerticalOptions = LayoutOptions.Start
@@ -195,15 +206,9 @@ public class GamePage : ContentPage
         // When clicked
         toggleButton.Clicked += (sender, e) =>
         {
-            boardDrawable.filling = !boardDrawable.filling;
-            if (boardDrawable.filling)
-            {
-                toggleButton.Text = "Mode: Fill";
-            }
-            else
-            {
-                toggleButton.Text = "Mode: Cross";
-            }
+            boardDrawable.fillType = boardDrawable.fillType == FillType.FILL ? FillType.CROSS : FillType.FILL;
+
+            toggleButton.Text = $"Mode: {boardDrawable.fillType}";
         };
     }
 
@@ -268,12 +273,103 @@ public class GamePage : ContentPage
         redoButton.IsEnabled = game.CanRedo;
     }
 
-    private void OnBoardTouched(object sender, TouchEventArgs e)
+    /// <summary>
+    /// Sets the movement direction, either vertically or horizontally, depending on whether <paramref name="cell"/>
+    /// is horizontal or vertical to <c>startingCell</c>, with a preference to a horizontal lock.
+    /// </summary>
+    /// <param name="cell">Cell to determine its position to in comparison to <see cref="startingCell"/>.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="cell"/> is <see cref="startingCell"/>.</exception>
+    private void LockMovementDirection(Point cell)
+    { 
+        if (cell.X != startingCell.X)
+        {
+            movementDirection = DragMovement.HORIZONTAL;
+        } else if (cell.Y != startingCell.Y)
+        {
+            movementDirection = DragMovement.VERTICAL;
+        } else
+        {
+            throw new ArgumentException("The provided cell is at the same location of the starting cell!");
+        }
+
+    }
+
+    /// <summary>
+    /// Changes <paramref name="cell"/>'s x-coordinate, or y-coordinate in accordance to <see cref="movementDirection"/>.
+    /// When <c>movementDirection</c> is <c>HORIZONTAL</c> the y-coordinate will be locked.
+    /// For <c>VERTICAL</c>, the x-coordinate is locked instead. 
+    /// When <c>movementDirection</c> is unlocked, <paramref name="cell"/> is returned.
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <returns><c>Point</c> of the translated cell as above.</returns>
+    private Point GetLockedCell(Point cell)
     {
+        if (movementDirection == DragMovement.HORIZONTAL)
+        {
+            return new Point(cell.X, startingCell.Y);
+        }
+        else if (movementDirection == DragMovement.VERTICAL)
+        {
+            return new Point(startingCell.X, cell.Y);
+        }
+
+        // In case movementDirection is unlocked, return the received cell.
+        return cell;
+    }
+
+    private void OnTouchStart(object sender, TouchEventArgs e)
+    {
+        isDragging = true;
+
         var touch = e.Touches.First();
-        boardDrawable.HandleTouch(touch.X, touch.Y);
+        Point cell = boardDrawable.ConvertTouchToCell(touch);
+
+        boardDrawable.OldFillType = boardDrawable.fillType;
+        boardDrawable.HandleCell(cell);
+        visitedCells.Add(((int) cell.X, (int) cell.Y));
+        startingCell = cell;
+
+        InvalidateViews();
+    }
+
+    private void OnTouchMove(object sender, TouchEventArgs e)
+    {
+        if (!isDragging) { return; }
+
+        var touch = e.Touches.First();
+        var cell = boardDrawable.ConvertTouchToCell(touch);
+
+        // Check visited cells first, in case this is still the same cell as we started on. 
+        // Otherwise, LockMovementDirection raises an exception.
+        if (visitedCells.Contains(((int)cell.X, (int)cell.Y)))
+        {
+            return;
+        }
+
+        if (movementDirection == DragMovement.UNLOCKED)
+        {
+            LockMovementDirection(cell);
+        }
+
+        Point lockedCell = GetLockedCell(cell);
+
+        boardDrawable.HandleCell(lockedCell);
+        visitedCells.Add(((int) lockedCell.X, (int) lockedCell.Y));
+        InvalidateViews();
+    }
+
+    private void OnTouchEnd(object sender, TouchEventArgs e)
+    {
+        visitedCells.Clear();
+        isDragging = false;
+
+        // Reset drawable's fill type
+        boardDrawable.lockFillType = false;
+        boardDrawable.fillType = boardDrawable.OldFillType;
+
+        // Reset movement direction
+        movementDirection = DragMovement.UNLOCKED;
 
         UpdateCommandButtons();
-        InvalidateViews();
     }
 }

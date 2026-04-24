@@ -7,7 +7,9 @@ internal class BoardDrawable : IDrawable
 {
     private GameAPI game;
     private float cellSize;
-    internal bool filling = true;
+    internal FillType fillType = FillType.FILL;
+    internal bool lockFillType = false;
+    internal FillType OldFillType { get; set; } = FillType.FILL;
 
     public BoardDrawable(GameAPI game)
     {
@@ -87,83 +89,117 @@ internal class BoardDrawable : IDrawable
         }
     }
 
+    /// <summary>
+    /// Converts touch coordinates to cell coordinates. Cell-coordinates are in <c>int</c> and can thus safely
+    /// be casted as such.
+    /// </summary>
+    /// <param name="touchX">x coordinate of touch</param>
+    /// <param name="touchY">y coordinate of touch</param>
+    /// <returns><c>Point</c> of cell touched.</returns>
+    public Point ConvertTouchToCell(double touchX, double touchY)
+    {
+        return new Point(
+            Math.Floor(touchX / cellSize),
+            Math.Floor(touchY / cellSize)
+            );
+    }
 
+    public Point ConvertTouchToCell(Point touchCoordinates)
+    {
+        return ConvertTouchToCell(touchCoordinates.X, touchCoordinates.Y);
+    }
+
+    /// <summary>
+    /// Converts touch coordinates to cell coordinates, then properly handles the cell. 
+    /// See <seealso cref="ConvertTouchToCell(double, double)"/> and <seealso cref="HandleCell(int, int)"/>
+    /// </summary>
+    /// <param name="touchX"></param>
+    /// <param name="touchY"></param>
     public void HandleTouch(float touchX, float touchY)
     {
-        int x = (int)(touchX / cellSize);
-        int y = (int)(touchY / cellSize);
+        Point cell = ConvertTouchToCell(touchX, touchY);
+        HandleCell((int) cell.X, (int) cell.Y);
+    }
+
+    /// <summary>
+    /// Handles a clicked square by updating its state according to selected mode.
+    /// </summary>
+    /// <param name="x">x coordinate of cell</param>
+    /// <param name="y">y coordinate of cell</param>
+    public void HandleCell(int x, int y)
+    {
+
+        // TODO Rework the whole square handling. This one is getting overly complicated
+        // since we now rely on fill type more than cell status.
 
         if (x < 0 || x >= game.Width || y < 0 || y >= game.Height)
         {
             return;
         }
 
+        if (!lockFillType)
+        {
+            // This is the first move in a potential drag, we need to determine the users intention
+            DetermineTouchIntention(x, y);
+            lockFillType = true;
+        }
+
+        SetCell(x, y);
+    }
+
+    /// <summary>
+    /// Handles a clicked square by updating its state according to selected mode. See also <seealso cref="HandleCell(int, int)"/>.
+    /// </summary>
+    /// <param name="cell">The coordinates of the clicked cell (so in cell coordinates)</param>
+    public void HandleCell(Point cell)
+    {
+        HandleCell((int)cell.X, (int)cell.Y);
+    }
+
+
+    private void DetermineTouchIntention(int x, int y)
+    {
         if (game.IsSquareFilled(x, y))
         {
-            HandleClickFilledSquare(x, y);
+            if (fillType == FillType.FILL)
+            {
+                fillType = FillType.EMPTY;
+            }
+            // Do not update the fill type if we click a filled square when either cross or empty is selected, keep current one
         }
         else if (game.IsSquareCrossed(x, y))
         {
-            HandleClickCrossedSquare(x, y);
+            if (fillType == FillType.CROSS)
+            {
+                fillType = FillType.EMPTY;
+            }
+            // Do not update the fill type if we click a crossed square when either fill or empty is selected, keep current one
         }
-        else
-        {
-            HandleClickEmptySquare(x, y);
-        }
+
+        // When a empty square is clicked, we should leave the fill type as is.
     }
 
-    private void HandleClickFilledSquare(int x, int y)
+    private void SetCell(int x, int y)
     {
-        if (!filling)
-        {
-            game.CrossCell(x, y);
-            return;
-        }
-
-        if (game.IsSquareEmpty(x, y))
+        // Do not change already filled cells, as this would introduce a new action to undo
+        if (fillType == FillType.FILL && !game.IsSquareFilled(x, y))
         {
             game.FillCell(x, y);
-            return;
         }
-
-        // For all other mouse clicks we empty the cell
-        game.EmptyCell(x, y);
-    }
-
-    private void HandleClickCrossedSquare(int x, int y)
-    {
-        if (filling)
-        {
-            game.FillCell(x, y);
-            return;
-        }
-
-        if (game.IsSquareEmpty(x, y))
+        // Again, do not change crossed cells to cross to avoid introducing new undo actions
+        else if (fillType == FillType.CROSS && !game.IsSquareCrossed(x, y))
         {
             game.CrossCell(x, y);
-            return;
         }
-
-        // For all other mouse clicks we empty the cell
-        game.EmptyCell(x, y);
-    }
-
-    private void HandleClickEmptySquare(int x, int y)
-    {
-        if (filling)
+        else if (fillType == FillType.EMPTY && !game.IsSquareEmpty(x, y))
         {
-            game.FillCell(x, y);
-            return;
+            // Only empty cells that were part of the intended types to remove
+            // E.g. only empty cells that are filled in if the intention was to empty filled in squares
+            if ((OldFillType == FillType.FILL && game.IsSquareFilled(x, y)) ||
+                (OldFillType == FillType.CROSS && game.IsSquareCrossed(x, y)) )
+            {
+                game.EmptyCell(x, y);
+            }
         }
-
-        if (!filling)
-        {
-            game.CrossCell(x, y);
-            return;
-        }
-
-        game.FillCell(x, y);
-
-        // Ignore other mouse buttons
     }
 }

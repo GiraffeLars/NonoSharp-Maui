@@ -33,6 +33,7 @@ public class MainPage : ContentPage
 
     private void AddButtons(Grid grid)
     {
+        // Create 3 buttons, 5x5, 10x10, 15x15
         for (int i = 0; i < 3; i++)
         {
             int size = (i + 1) * 5;

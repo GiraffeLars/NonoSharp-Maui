@@ -92,6 +92,7 @@ public class GamePage : ContentPage
 
         horizontalHintsView.HeightRequest = boardSize;
         horizontalHintsView.WidthRequest = horizontalHintsDrawable.RequiredWidth;
+
         commandButtonsGrid.WidthRequest = horizontalHintsDrawable.RequiredWidth;
         undoButton.WidthRequest = horizontalHintsDrawable.RequiredWidth / 2;
         redoButton.WidthRequest = horizontalHintsDrawable.RequiredWidth / 2;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Picross.Maui.Drawables
 {
-    internal class HorizontalHintsDrawable : IDrawable
+    internal class rowHintsDrawable : IDrawable
     {
         private readonly GameAPI game;
 
@@ -15,17 +15,17 @@ namespace Picross.Maui.Drawables
         // The required Width needed for all the hints. When used in GamePage, this ensures the grid is centered
         internal float RequiredWidth { get; private set; }
 
-        internal HorizontalHintsDrawable(GameAPI game)
+        internal rowHintsDrawable(GameAPI game)
         {
             this.game = game;
         }
 
         /// <summary>
-        /// Sets the available spacing for the vertical hints. Also sets <c>this.RequiredWidth</c>.
+        /// Sets the available spacing for the column hints. Also sets <c>this.RequiredWidth</c>.
         /// </summary>
         /// <param name="totalWidth">Total width available for the hints, as calculated in GamePage</param>
         /// <param name="totalHeight">Total height available for the hints, as calculated in GamePage</param>
-        /// <param name="maxHints">Maximum amount of hints in any of the vertical hints</param>
+        /// <param name="maxHints">Maximum amount of hints in any of the column hints</param>
         internal void SetAvailableSize(double totalWidth, double totalHeight, int maxHints)
         {
             // Calculate spacing between numbers, but cap spacing so they are never too far apart
@@ -41,7 +41,7 @@ namespace Picross.Maui.Drawables
 
             for (int y = 0; y < game.Height; y++)
             {
-                Hints hints = game.HorizontalHints[y];
+                Hints hints = game.RowHints[y];
 
                 // Traverse backwards through the hint so that the last hint
                 // is almost touching the grid

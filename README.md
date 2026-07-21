@@ -1,0 +1,95 @@
+# Picross
+A cross-platform Picross game built with C# and .NET MAUI, featuring randomly generated puzzles and reusable game logic API.
+
+> Status: Currently in-development. No official release yet.
+
+<img src="docs/PicrossGame.png" alt="Picross Puzzle being solved" width="500"/>
+
+
+## What is Picross?
+[Picross](https://en.wikipedia.org/wiki/Nonogram) (also known as Nonogram) is a Japanese puzzle game, where you fill in a picture based on hints given to you.
+The hints, either on the left-side or top-side of the grid, show how many groups there are in a given row/column and show how many cells each group consists of.
+By filling the grid one cell at a time, eventually you reach the solution.
+
+## Features
+- **A fully functional Picross game**, complete with hint checking
+- **Randomly generated puzzles** guaranteed to be solvable as verified by a solver
+- **Cross-platform** UI built with MAUI
+- An **API** allowing for game logic to be reused in other project without building it yourself
+
+## Using the API
+The core logic for the puzzles is located in *Picross.Game*, and is independent of the MAUI UI.
+This makes it possible to reference in any .NET project.
+Currently supported functions include:
+- Abstracted grid, making it easy to implement in your projects
+- Built-in undo/redo functionality
+- Checking whether the puzzle is solved
+- A hint system, together with whether a hint is completed by the user.
+
+### Example usage
+```csharp
+using Picross.Game;
+ 
+// Creates a new 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
+var game = new GameAPI(10, 10); // (width x height)
+ 
+// Fill in or cross a cell (coordinates are zero-indexed, (0, 0) is top-left)
+game.FillCell(2, 3);
+game.CrossCell(0, 0);
+ 
+// Moves can be undone/redone
+if (game.CanUndo)
+{
+    game.Undo();
+}
+ 
+// Check individual cell state
+bool isFilled = game.IsSquareFilled(2, 3);
+ 
+// Check overall progress
+if (game.IsPuzzleSolved())
+{
+    Console.WriteLine("Solved!");
+} 
+else 
+{
+    Console.WriteLine("Not solved :(");
+}
+
+ 
+// The hints shown alongside the grid (e.g. "3 1" for a row) are available for building your own UI
+Hints[] columnHints = game.ColumnHints;
+Hints[] rowHints = game.RowHints;
+```
+
+## Getting Started
+For now, there is no release yet, as there are still features I wish to implement before I consider the project ready for a first released build. To play and/or contribute,
+you will have to build the project yourself. The project makes use of .NET 10.0 and MAUI.
+
+> **Note:** I cannot guarantee functionality on operating systems other than Windows or Android, but they should work
+considering MAUI is multi-platform.
+
+> A more detailed getting started section will be added at a later date.
+
+## Roadmap
+Features that are currently planned to be added *(in no particular order)*:
+- [x] Random puzzle generation that have a guaranteed solution
+- [ ] Dark mode support
+- [ ] Support for pre-made puzzles
+- [ ] Improve player controls and response (e.g. auto-fill line with crosses when completed)
+- [ ] Player statistics
+- [ ] UI improvements
+- [ ] Player-created puzzles and puzzle creator
+
+## Contributing
+This project started as a solo learning project, but contributions are welcome. Please open a PR or an issue if you wish to contribute. 
+
+When submitting a pull request, please make note of the following:
+- Keep PRs focussed
+- If you make any changes to the logic, ensure that the tests verify
+- Make sure the project buids and functions as intended
+- Keep code documented
+- Try to keep AI generated code at a minimum
+
+## License
+This project is licensed under the **MIT License**. See the `LICENSE` file.

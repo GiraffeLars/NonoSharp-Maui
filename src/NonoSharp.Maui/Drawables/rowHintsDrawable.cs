@@ -47,7 +47,7 @@ namespace Picross.Maui.Drawables
                 // is almost touching the grid
                 for (int x = hints.Count - 1; x >= 0; x--)
                 {
-                    Hint hint = hints.GetHint(x);
+                    Hint hint = hints[x];
                     canvas.FontColor = hint.Completed ? Colors.Gray : Colors.Black;
 
                     float xPos = dirtyRect.Width - (hints.Count - x) * numberOffset;

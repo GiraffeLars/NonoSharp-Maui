@@ -42,7 +42,7 @@ public class GamePage : ContentPage
 
     public GamePage(int width, int height)
     {
-        game = new GameAPI(width, height);
+        game = GameAPI.CreateRandomPuzzle(width, height);
 
         FillHintData();
 

@@ -30,8 +30,8 @@ Currently supported functions include:
 ```csharp
 using Picross.Game;
  
-// Creates a new 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
-var game = new GameAPI(10, 10); // (width x height)
+// Creates a new random 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
+var game = GameAPI.CreateRandomPuzzle(10, 10); // (width x height)
  
 // Fill in or cross a cell (coordinates are zero-indexed, (0, 0) is top-left)
 game.FillCell(2, 3);

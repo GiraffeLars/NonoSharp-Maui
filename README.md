@@ -1,7 +1,7 @@
 # Picross
 A cross-platform Picross game built with C# and .NET MAUI, featuring randomly generated puzzles and reusable game logic API.
 
-> Status: Currently in-development. No official release yet.
+> Status: Currently in-development. A beta build (v0.0.0) is available in Releases.
 
 <img src="docs/PicrossGame.png" alt="Picross Puzzle being solved" width="500"/>
 
@@ -63,8 +63,9 @@ Hints[] rowHints = game.RowHints;
 ```
 
 ## Getting Started
-For now, there is no release yet, as there are still features I wish to implement before I consider the project ready for a first released build. To play and/or contribute,
-you will have to build the project yourself. The project makes use of .NET 10.0 and MAUI.
+To play a basic Picross game build upon the API, a beta release is available in the release tab. To contribute,
+you can clone the project and open it in your prefered IDE. The project makes use of .NET 10.0 and MAUI.
+You will possibly have to run `dotnet restore` in case your build fails.
 
 > **Note:** I cannot guarantee functionality on operating systems other than Windows or Android, but they should work
 considering MAUI is multi-platform.
@@ -74,9 +75,10 @@ considering MAUI is multi-platform.
 ## Roadmap
 Features that are currently planned to be added *(in no particular order)*:
 - [x] Random puzzle generation that have a guaranteed solution
+- [x] Automatically cross the remaining blank cells upon line completion
 - [ ] Dark mode support
 - [ ] Support for pre-made puzzles
-- [ ] Improve player controls and response (e.g. auto-fill line with crosses when completed)
+- [ ] Improve player controls on PC
 - [ ] Player statistics
 - [ ] UI improvements
 - [ ] Player-created puzzles and puzzle creator

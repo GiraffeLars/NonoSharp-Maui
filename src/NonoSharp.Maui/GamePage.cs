@@ -156,9 +156,15 @@ public class GamePage : ContentPage
             Drawable = rowHintsDrawable
         };
 
+#if WINDOWS
+        boardView.HandlerChanged += OnHandlerChanged;
+        boardView.HandlerChanging += OnHandlerChanging;
+#else
         boardView.StartInteraction += OnTouchStart;
-        boardView.DragInteraction += OnTouchMove;
         boardView.EndInteraction += OnTouchEnd;
+#endif
+        boardView.DragInteraction += OnTouchMove;
+
     }
 
     [MemberNotNull(nameof(mainGrid))]
@@ -207,12 +213,16 @@ public class GamePage : ContentPage
         // When clicked
         toggleButton.Clicked += (sender, e) =>
         {
-            boardDrawable.fillType = boardDrawable.fillType == FillType.FILL ? FillType.CROSS : FillType.FILL;
-
-            toggleButton.Text = $"Mode: {boardDrawable.fillType}";
+            ToggleFillMode();
         };
     }
 
+    private void ToggleFillMode()
+    {
+        boardDrawable.fillType = boardDrawable.fillType == FillType.FILL ? FillType.CROSS : FillType.FILL;
+
+        toggleButton.Text = $"Mode: {boardDrawable.fillType}";
+    }
 
     [MemberNotNull(nameof(undoButton), nameof(redoButton), nameof(commandButtonsGrid))]
     private void CreateCommandButtons()
@@ -318,19 +328,39 @@ public class GamePage : ContentPage
         return cell;
     }
 
-    private void OnTouchStart(object sender, TouchEventArgs e)
+    private void HandleMoveStart(float x, float y)
     {
         isDragging = true;
+        Point cell = boardDrawable.ConvertTouchToCell(x, y);
 
-        var touch = e.Touches.First();
-        Point cell = boardDrawable.ConvertTouchToCell(touch);
-
-        boardDrawable.OldFillType = boardDrawable.fillType;
         boardDrawable.HandleCell(cell);
-        visitedCells.Add(((int) cell.X, (int) cell.Y));
+        visitedCells.Add(((int)cell.X, (int)cell.Y));
         startingCell = cell;
 
         InvalidateViews();
+    }
+
+    private void HandleMoveEnd()
+    {
+        visitedCells.Clear();
+        isDragging = false;
+
+        // Reset drawable's fill type
+        boardDrawable.lockFillType = false;
+        boardDrawable.fillType = boardDrawable.OldFillType;
+
+        // Reset movement direction
+        movementDirection = DragMovement.UNLOCKED;
+
+        UpdateCommandButtons();
+    }
+
+    private void OnTouchStart(object sender, TouchEventArgs e)
+    {
+        var touch = e.Touches.First();
+
+        boardDrawable.OldFillType = boardDrawable.fillType;
+        HandleMoveStart(touch.X, touch.Y);
     }
 
     private void OnTouchMove(object sender, TouchEventArgs e)
@@ -361,16 +391,53 @@ public class GamePage : ContentPage
 
     private void OnTouchEnd(object sender, TouchEventArgs e)
     {
-        visitedCells.Clear();
-        isDragging = false;
-
-        // Reset drawable's fill type
-        boardDrawable.lockFillType = false;
-        boardDrawable.fillType = boardDrawable.OldFillType;
-
-        // Reset movement direction
-        movementDirection = DragMovement.UNLOCKED;
-
-        UpdateCommandButtons();
+        HandleMoveEnd();
     }
+
+#if WINDOWS
+    private void OnHandlerChanged(object? sender, EventArgs e)
+    {
+        if (boardView.Handler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement nativeView)
+        {
+            nativeView.PointerPressed += OnNativePointerPressed;
+            nativeView.PointerReleased += OnNativePointerReleased;
+        }
+    }
+
+    private void OnHandlerChanging(object? sender, HandlerChangingEventArgs e)
+    {
+        // Per MAUI docs, always clean up the added events to prevent a memory leak
+        // TODO: This does not work yet! This input system needs to be put in boardView and 
+        // a rework will be necessary using probably an event system to redraw the view in GamePage
+        if (e.OldHandler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement nativeView)
+        {
+            nativeView.PointerPressed -= OnNativePointerPressed;
+            nativeView.PointerReleased -= OnNativePointerReleased;
+        }
+    }
+
+    private void OnNativePointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        var point = e.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender);
+
+        boardDrawable.OldFillType = boardDrawable.fillType;
+        if (point.Properties.IsRightButtonPressed)
+        {
+            ToggleFillMode();
+        }
+        HandleMoveStart((float) point.Position.X, (float) point.Position.Y);
+    }
+
+    private void OnNativePointerReleased(object? sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        var point = e.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender!);
+
+        if (point.Properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.RightButtonReleased)
+        {
+            ToggleFillMode();
+        }
+
+        HandleMoveEnd();
+    }
+#endif
 }

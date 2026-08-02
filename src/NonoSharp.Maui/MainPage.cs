@@ -4,8 +4,8 @@ namespace Picross.Maui;
 
 public class MainPage : ContentPage
 {
-	public MainPage()
-	{
+    public MainPage()
+    {
         Grid menu = new()
         {
             VerticalOptions = LayoutOptions.Center,
@@ -28,6 +28,15 @@ public class MainPage : ContentPage
 
 
         AddButtons(menu);
+
+        // Necessary as some systems do not change the standard background automatically upon
+        // theme change and default system color might mismatch
+        BackgroundColor = Theme.BackgroundColor;
+        Application.Current!.RequestedThemeChanged += (s, a) =>
+        {
+            BackgroundColor = Theme.BackgroundColor;
+        };
+
         Content = menu;
     }
 

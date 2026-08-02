@@ -27,8 +27,8 @@ internal class BoardDrawable : IDrawable
 
     private void DrawSquares(ICanvas canvas)
     {
-        canvas.FillColor = game.IsPuzzleSolved() ? Colors.Green : Colors.Black;
-        canvas.StrokeColor = Colors.Black;
+        canvas.FillColor = game.IsPuzzleSolved() ? Theme.SolvedCell : Theme.FilledCell;
+        canvas.StrokeColor = Theme.CrossColor;
         canvas.StrokeSize = 4;
 
         for (int x = 0; x < game.Width; x++)
@@ -58,7 +58,7 @@ internal class BoardDrawable : IDrawable
     }
     private void DrawLines(ICanvas canvas)
     {
-        canvas.StrokeColor = Colors.Gray;
+        canvas.StrokeColor = Theme.GridLine;
         for (int x = 0; x <= game.Width; x++)
         {
             if (x % 5 == 0)

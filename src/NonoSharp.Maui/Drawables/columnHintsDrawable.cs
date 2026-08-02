@@ -48,7 +48,7 @@ namespace Picross.Maui.Drawables
                 for (int y = hints.Count - 1; y >= 0; y--)
                 {
                     Hint hint = hints[y];
-                    canvas.FontColor = hint.Completed ? Colors.Gray : Colors.Black;
+                    canvas.FontColor = hint.Completed ? Theme.CompletedHint : Theme.IncompleteHint;
 
 
                     float xPos = colWidth * x;

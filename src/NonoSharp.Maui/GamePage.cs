@@ -51,6 +51,11 @@ public class GamePage : ContentPage
         CreateViews();
         CreateMainGrid();
 
+        // Set theme related things. Set background here as well in case of mismatch between
+        // system standard background and Theme.BackgroundColor
+        this.BackgroundColor = Theme.BackgroundColor;
+        Application.Current!.RequestedThemeChanged += OnThemeChanged;
+
         Content = mainGrid;
     }
 
@@ -97,6 +102,12 @@ public class GamePage : ContentPage
         undoButton.WidthRequest = rowHintsDrawable.RequiredWidth / 2;
         redoButton.WidthRequest = rowHintsDrawable.RequiredWidth / 2;
 
+        InvalidateViews();
+    }
+
+    private void OnThemeChanged(object? sender, AppThemeChangedEventArgs args)
+    {
+        this.BackgroundColor = Theme.BackgroundColor;
         InvalidateViews();
     }
 

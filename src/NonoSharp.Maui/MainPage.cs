@@ -2,9 +2,9 @@ using System.Text;
 
 namespace Picross.Maui;
 
-public class MainPage : ContentPage
+public class MainPage : ThemedPage
 {
-    public MainPage()
+    public MainPage() : base()
     {
         Grid menu = new()
         {
@@ -28,14 +28,6 @@ public class MainPage : ContentPage
 
 
         AddButtons(menu);
-
-        // Necessary as some systems do not change the standard background automatically upon
-        // theme change and default system color might mismatch
-        BackgroundColor = Theme.BackgroundColor;
-        Application.Current!.RequestedThemeChanged += (s, a) =>
-        {
-            BackgroundColor = Theme.BackgroundColor;
-        };
 
         Content = menu;
     }

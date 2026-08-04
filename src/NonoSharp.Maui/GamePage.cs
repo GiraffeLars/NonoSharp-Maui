@@ -7,12 +7,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Picross.Maui;
 
-public class GamePage : ContentPage
+public partial class GamePage : ThemedPage
 {
-    private GameAPI game;
-    private GraphicsView boardView;
-    private GraphicsView columnHintsView;
-    private GraphicsView rowHintsView;
+    private readonly GameAPI game;
     private BoardDrawable boardDrawable;
     private columnHintsDrawable columnHintsDrawable;
     private rowHintsDrawable rowHintsDrawable;
@@ -33,7 +30,7 @@ public class GamePage : ContentPage
 
     // Used for dragging across the board. HashSet uses (int, int) to represent cell (x, y)-coordinates.
     // Do not use Point, due to the representation of X and Y being in double.
-    private HashSet<(int, int)> visitedCells = new();
+    private readonly HashSet<(int, int)> visitedCells = [];
     private bool isDragging;
     private DragMovement movementDirection;
 
@@ -50,11 +47,6 @@ public class GamePage : ContentPage
         CreateCommandButtons();
         CreateViews();
         CreateMainGrid();
-
-        // Set theme related things. Set background here as well in case of mismatch between
-        // system standard background and Theme.BackgroundColor
-        this.BackgroundColor = Theme.BackgroundColor;
-        Application.Current!.RequestedThemeChanged += OnThemeChanged;
 
         Content = mainGrid;
     }
@@ -80,8 +72,8 @@ public class GamePage : ContentPage
         // Calculate the allocated board size & set the request
         double boardSize = Math.Min(width, height) * BOARD_SCREEN_PERCENTAGE;
 
-        boardView.HeightRequest = boardSize;
-        boardView.WidthRequest = boardSize;
+        views["board"].HeightRequest = boardSize;
+        views["board"].WidthRequest = boardSize;
 
         double buttonSize = BUTTON_HEIGHT + BUTTON_MARGIN * 2; // margin * 2 as margin is 10 px on both 
         double availableHintHeight = height - boardSize - buttonSize;
@@ -92,11 +84,11 @@ public class GamePage : ContentPage
         rowHintsDrawable.SetAvailableSize(availableHintWidth, boardSize, maxRowHints);
 
         // Give the hints their allocated screen space
-        columnHintsView.HeightRequest = columnHintsDrawable.RequiredHeight;
-        columnHintsView.WidthRequest = boardSize;
+        views["columnHints"].HeightRequest = columnHintsDrawable.RequiredHeight;
+        views["columnHints"].WidthRequest = boardSize;
 
-        rowHintsView.HeightRequest = boardSize;
-        rowHintsView.WidthRequest = rowHintsDrawable.RequiredWidth;
+        views["rowHints"].HeightRequest = boardSize;
+        views["rowHints"].WidthRequest = rowHintsDrawable.RequiredWidth;
 
         commandButtonsGrid.WidthRequest = rowHintsDrawable.RequiredWidth;
         undoButton.WidthRequest = rowHintsDrawable.RequiredWidth / 2;
@@ -105,23 +97,7 @@ public class GamePage : ContentPage
         InvalidateViews();
     }
 
-    private void OnThemeChanged(object? sender, AppThemeChangedEventArgs args)
-    {
-        this.BackgroundColor = Theme.BackgroundColor;
-        InvalidateViews();
-    }
-
-    /// <summary>
-    /// Invalidates all views
-    /// </summary>
-    private void InvalidateViews()
-    {
-        boardView.Invalidate();
-        columnHintsView.Invalidate();
-        rowHintsView.Invalidate();
-    }
-
-    private int GetMaxHints(Hints[] hints)
+    private static int GetMaxHints(Hints[] hints)
     {
         int max = 0;
 
@@ -144,37 +120,36 @@ public class GamePage : ContentPage
         maxColumnHints = GetMaxHints(game.ColumnHints);
     }
 
-    [MemberNotNull(nameof(boardView), nameof(boardDrawable), nameof(columnHintsView), 
-        nameof(rowHintsView), nameof(columnHintsDrawable), nameof(rowHintsDrawable))]
+    [MemberNotNull(nameof(boardDrawable), nameof(columnHintsDrawable), nameof(rowHintsDrawable))]
     private void CreateViews()
     {
         boardDrawable = new BoardDrawable(game);
         columnHintsDrawable = new columnHintsDrawable(game);
         rowHintsDrawable = new rowHintsDrawable(game);
 
-        boardView = new GraphicsView
+        views.Add("board", new GraphicsView
         {
             Drawable = boardDrawable,
-        };
+        });
 
-        columnHintsView = new GraphicsView
+        views.Add("columnHints", new GraphicsView
         {
             Drawable = columnHintsDrawable,
-        };
+        });
 
-        rowHintsView = new GraphicsView
+        views.Add("rowHints", new GraphicsView
         {
             Drawable = rowHintsDrawable
-        };
+        });
 
 #if WINDOWS
-        boardView.HandlerChanged += OnHandlerChanged;
-        boardView.HandlerChanging += OnHandlerChanging;
+        views["board"].HandlerChanged += OnHandlerChanged;
+        views["board"].HandlerChanging += OnHandlerChanging;
 #else
-        boardView.StartInteraction += OnTouchStart;
-        boardView.EndInteraction += OnTouchEnd;
+        views["board"].StartInteraction += OnTouchStart;
+        views["board"].EndInteraction += OnTouchEnd;
 #endif
-        boardView.DragInteraction += OnTouchMove;
+        views["board"].DragInteraction += OnTouchMove;
 
     }
 
@@ -201,9 +176,9 @@ public class GamePage : ContentPage
         };
 
         // Add children
-        mainGrid.Add(boardView, 1, 1);          // bottom-right
-        mainGrid.Add(columnHintsView, 1, 0);  // top-right (above board)
-        mainGrid.Add(rowHintsView, 0, 1);// bottom-left (beside board)
+        mainGrid.Add(views["board"], 1, 1);          // bottom-right
+        mainGrid.Add(views["columnHints"], 1, 0);  // top-right (above board)
+        mainGrid.Add(views["rowHints"], 0, 1);// bottom-left (beside board)
         mainGrid.Add(toggleButton, 1, 2);       // underneath the board
         mainGrid.Add(commandButtonsGrid, 0, 2);       // underneath left hints
     }
@@ -366,7 +341,7 @@ public class GamePage : ContentPage
         UpdateCommandButtons();
     }
 
-    private void OnTouchStart(object sender, TouchEventArgs e)
+    private void OnTouchStart(object? sender, TouchEventArgs e)
     {
         var touch = e.Touches.First();
 
@@ -374,7 +349,7 @@ public class GamePage : ContentPage
         HandleMoveStart(touch.X, touch.Y);
     }
 
-    private void OnTouchMove(object sender, TouchEventArgs e)
+    private void OnTouchMove(object? sender, TouchEventArgs e)
     {
         if (!isDragging) { return; }
 
@@ -400,7 +375,7 @@ public class GamePage : ContentPage
         InvalidateViews();
     }
 
-    private void OnTouchEnd(object sender, TouchEventArgs e)
+    private void OnTouchEnd(object? sender, TouchEventArgs e)
     {
         HandleMoveEnd();
     }
@@ -408,7 +383,7 @@ public class GamePage : ContentPage
 #if WINDOWS
     private void OnHandlerChanged(object? sender, EventArgs e)
     {
-        if (boardView.Handler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement nativeView)
+        if (views["board"].Handler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement nativeView)
         {
             nativeView.PointerPressed += OnNativePointerPressed;
             nativeView.PointerReleased += OnNativePointerReleased;
@@ -427,8 +402,13 @@ public class GamePage : ContentPage
         }
     }
 
-    private void OnNativePointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    private void OnNativePointerPressed(object? sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
+        if (sender == null)
+        {
+            return;
+        }
+
         var point = e.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender);
 
         boardDrawable.OldFillType = boardDrawable.fillType;
@@ -441,7 +421,12 @@ public class GamePage : ContentPage
 
     private void OnNativePointerReleased(object? sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
-        var point = e.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender!);
+        if (sender == null)
+        { 
+            return; 
+        }
+
+        var point = e.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender);
 
         if (point.Properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.RightButtonReleased)
         {

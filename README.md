@@ -76,7 +76,7 @@ considering MAUI is multi-platform.
 Features that are currently planned to be added *(in no particular order)*:
 - [x] Random puzzle generation that have a guaranteed solution
 - [x] Automatically cross the remaining blank cells upon line completion
-- [ ] Dark mode support
+- [x] Dark mode support
 - [ ] Support for pre-made puzzles
 - [ ] Improve player controls on PC
 - [ ] Player statistics

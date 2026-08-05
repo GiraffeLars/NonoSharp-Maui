@@ -42,9 +42,9 @@ public partial class GamePage : ThemedPage
     private Microsoft.UI.Xaml.FrameworkElement? _nativeView = null;
 #endif
 
-    public GamePage(int width, int height)
+    public GamePage(GameAPI gameAPI)
     {
-        game = GameAPI.CreateRandomPuzzle(width, height);
+        game = gameAPI;
 
         game.CellStateChanged += (s, e) =>
         {

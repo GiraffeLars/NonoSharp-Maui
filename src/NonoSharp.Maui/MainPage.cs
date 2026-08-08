@@ -92,7 +92,7 @@ public partial class MainPage : ThemedPage
             indicator.IsRunning = true;
             indicator.IsEnabled = true;
             // Change to game page with size x size grid corresponding to button upon click
-            GameAPI api = await GameAPI.CreateRandomPuzzle(size, size);
+            GameAPI api = await GameAPI.CreateRandomPuzzleAsync(size, size);
             await Navigation.PushAsync(new GamePage(api));
         }
         finally

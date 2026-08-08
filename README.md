@@ -1,7 +1,7 @@
 # Picross
 A cross-platform Picross game built with C# and .NET MAUI, featuring randomly generated puzzles and reusable game logic API.
 
-> Status: Currently in-development. A beta build (v0.0.0) is available in Releases.
+> Status: Currently in-development. A beta build is available in Releases.
 
 <img src="docs/PicrossGame.png" alt="Picross Puzzle being solved" width="500"/>
 
@@ -25,12 +25,15 @@ Currently supported functions include:
 - Built-in undo/redo functionality
 - Checking whether the puzzle is solved
 - A hint system, together with whether a hint is completed by the user.
+- Events for cells changing states and the puzzle being solved correctly
 
 ### Example usage
 ```csharp
 using Picross.Game;
+using Picross.Game.Events;
  
 // Creates a new random 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
+// This method is also available asynchronously via GameAPI.CreateRandomPuzzleAsync
 var game = GameAPI.CreateRandomPuzzle(10, 10); // (width x height)
  
 // Fill in or cross a cell (coordinates are zero-indexed, (0, 0) is top-left)
@@ -60,15 +63,22 @@ else
 // The hints shown alongside the grid (e.g. "3 1" for a row) are available for building your own UI
 Hints[] columnHints = game.ColumnHints;
 Hints[] rowHints = game.RowHints;
+
+// There are also some events provided
+game.CellStateChanged =+ (s, e) => {
+    Console.WriteLine("A cell has changed states");
+
+    // Include using Picross.Game.Events to gain access to the event args
+};
 ```
 
 ## Getting Started
 To play a basic Picross game build upon the API, a beta release is available in the release tab. To contribute,
-you can clone the project and open it in your prefered IDE. The project makes use of .NET 10.0 and MAUI.
+you can clone the project and open it in your prefered IDE. The project makes use of [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) and [sqlite-net-pcl](https://www.nuget.org/packages/sqlite-net-pcl/).
 You will possibly have to run `dotnet restore` in case your build fails.
 
 > **Note:** I cannot guarantee functionality on operating systems other than Windows or Android, but they should work
-considering MAUI is multi-platform.
+considering MAUI is multi-platform. Some features may not be available on all operating systems due to MAUI limitations.
 
 > A more detailed getting started section will be added at a later date.
 

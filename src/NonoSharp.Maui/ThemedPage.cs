@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Picross.Maui.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,16 +12,32 @@ namespace Picross.Maui
     public partial class ThemedPage : ContentPage
     {
         protected Dictionary<string, GraphicsView> views;
+
         public ThemedPage() : base() 
         {
             views = new();
+
             // Set Background color (in case of system mismatch) and add event handling when system theme changes
             BackgroundColor = Theme.BackgroundColor;
             Application.Current!.RequestedThemeChanged += (s, a) =>
             {
-                BackgroundColor = Theme.BackgroundColor;
-                this.InvalidateViews();
+                UpdateTheme();
             };
+        }
+
+        protected virtual void UpdateTheme()
+        {
+            BackgroundColor = Theme.BackgroundColor;
+
+#if !ANDROID
+            // Change the bar color as well to avoid a weird mismatch
+            // Not on android since the nav bar is set to purple by default (colors.xml in Android folder)
+            if (this.Parent is NavigationPage navPage)
+            {
+                navPage.BarBackgroundColor = Theme.BackgroundColor;
+            }
+#endif
+            InvalidateViews();
         }
 
         internal void InvalidateViews()

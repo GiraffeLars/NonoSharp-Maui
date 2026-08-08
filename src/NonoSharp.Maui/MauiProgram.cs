@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Picross.Maui.Data;
 
 namespace Picross.Maui
 {
@@ -19,7 +20,18 @@ namespace Picross.Maui
     		builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            // Add database as singleton
+            builder.Services.AddSingleton<Database>();
+
+            // Add SettingsService. Is initialized after the app has been built.
+            builder.Services.AddSingleton<SettingsService>();
+
+            var app = builder.Build();
+
+            SettingsService settingsService = app.Services.GetRequiredService<SettingsService>();
+            Task.Run(() => settingsService.InitializeAsync());
+
+            return app;
         }
     }
 }

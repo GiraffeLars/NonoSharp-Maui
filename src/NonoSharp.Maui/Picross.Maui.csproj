@@ -57,80 +57,80 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-maccatalyst|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-maccatalyst|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationTitle>Picross</ApplicationTitle>
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Tests|net10.0-android|AnyCPU'">
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Tests|net10.0-ios|AnyCPU'">
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Tests|net10.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Tests|net10.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.giraffelars.picross</ApplicationId>
-	  <ApplicationDisplayVersion>0.0.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 

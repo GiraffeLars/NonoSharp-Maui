@@ -1,4 +1,7 @@
 # Picross
+[![Build and Test API project](https://github.com/GiraffeLars/Picross/actions/workflows/test-api.yml/badge.svg)](https://github.com/GiraffeLars/Picross/actions/workflows/test-api.yml)
+[![Build MAUI project](https://github.com/GiraffeLars/Picross/actions/workflows/build-windows.yml/badge.svg)](https://github.com/GiraffeLars/Picross/actions/workflows/build-windows.yml)
+
 A cross-platform Picross game built with C# and .NET MAUI, featuring randomly generated puzzles and reusable game logic API.
 
 > Status: Currently in-development. A beta build is available in Releases.
@@ -13,12 +16,12 @@ By filling the grid one cell at a time, eventually you reach the solution.
 
 ## Features
 - **A fully functional Picross game**, complete with hint checking
-- **Randomly generated puzzles** guaranteed to be solvable as verified by a solver
+- **Randomly generated puzzles** guaranteed to be uniquely solvable as verified by the built-in solver
 - **Cross-platform** UI built with MAUI
-- An **API** allowing for game logic to be reused in other project without building it yourself
+- An **API** allowing for game logic to be reused in other projects
 
 ## Using the API
-The core logic for the puzzles is located in *Picross.Game*, and is independent of the MAUI UI.
+The core logic for the puzzles is located in *Picross.Game*, and is **independent** of the MAUI UI.
 This makes it possible to reference in any .NET project.
 Currently supported functions include:
 - Abstracted grid, making it easy to implement in your projects
@@ -65,7 +68,7 @@ Hints[] columnHints = game.ColumnHints;
 Hints[] rowHints = game.RowHints;
 
 // There are also some events provided
-game.CellStateChanged =+ (s, e) => {
+game.CellStateChanged += (s, e) => {
     Console.WriteLine("A cell has changed states");
 
     // Include using Picross.Game.Events to gain access to the event args
@@ -73,14 +76,44 @@ game.CellStateChanged =+ (s, e) => {
 ```
 
 ## Getting Started
-To play a basic Picross game build upon the API, a beta release is available in the release tab. To contribute,
-you can clone the project and open it in your prefered IDE. The project makes use of [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) and [sqlite-net-pcl](https://www.nuget.org/packages/sqlite-net-pcl/).
-You will possibly have to run `dotnet restore` in case your build fails.
+### Playing
+To play the game build upon the API, install the beta release in the [Releases](https://github.com/GiraffeLars/Picross/releases) tab.
+Currently, only a build for Windows is available. If you wish to play on a different platform, see the section below.
 
-> **Note:** I cannot guarantee functionality on operating systems other than Windows or Android, but they should work
-considering MAUI is multi-platform. Some features may not be available on all operating systems due to MAUI limitations.
+### Contributing
+To contribute, clone the project and open it in your prefered IDE, such as Visual Studio. The project makes use of [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) and [sqlite-net-pcl](https://www.nuget.org/packages/sqlite-net-pcl/).
+> **Note:** I cannot guarantee (full) functionality on operating systems other than Windows or Android. While other MAUI platforms are supported, they may contain unexpected issues. 
+> Some features may not be available on all operating systems due to MAUI limitations.
 
-> A more detailed getting started section will be added at a later date.
+### Installing dependencies
+In order to build the project, you will need, as mentioned above, .NET 10.0, .NET MAUI and sqlite-net-pcl. To install the .NET MAUI workload, run the following command in your terminal
+```
+dotnet workload install maui
+```
+Alternatively, it is also possible to automatically install the workload when installing Visual Studio by selecting the corresponding option in the installer.
+
+After .NET MAUI has successfully installed, clone the project and open it in your IDE. Before building the project, run the following command. This will install required dependencies, such as sqlite-net-pcl and fix other possible issues. 
+```
+dotnet restore
+```
+### Building the project
+After setting everything up, you can build the MAUI project with
+```
+dotnet build src/Picross.Maui/Picross.Maui.csproj
+```
+Similarly, if you wish to build just the API, run
+```
+dotnet build src/Picross.Game/Picross.Game.csproj
+```
+
+Of course, you are also welcome to use your IDE's debugger to build the project and/or play it.
+
+### Unit tests
+The API project is paired with a test suite found in `tests/Picross.Game.Tests`. To run the tests, either use your IDE's unit testing features or run the following:
+```
+dotnet test tests/Picross.Game.Tests/Picross.Game.Tests.csproj
+```
+When contributing, please ensure that the unit tests all pass. These will also be checked when opening a pull request.
 
 ## Roadmap
 Features that are currently planned to be added *(in no particular order)*:
@@ -93,7 +126,7 @@ Features that are currently planned to be added *(in no particular order)*:
 - [ ] UI improvements
 - [ ] Player-created puzzles and puzzle creator
 
-## Contributing
+## Contribution guidelines
 This project started as a solo learning project, but contributions are welcome. Please open a PR or an issue if you wish to contribute. 
 
 When submitting a pull request, please make note of the following:

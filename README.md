@@ -2,9 +2,9 @@
 [![Build and Test API project](https://github.com/GiraffeLars/Picross/actions/workflows/test-api.yml/badge.svg)](https://github.com/GiraffeLars/Picross/actions/workflows/test-api.yml)
 [![Build MAUI project](https://github.com/GiraffeLars/Picross/actions/workflows/build-windows.yml/badge.svg)](https://github.com/GiraffeLars/Picross/actions/workflows/build-windows.yml)
 
-A cross-platform Picross game built with C# and .NET MAUI, featuring randomly generated puzzles and reusable game logic API.
+A cross-platform Picross game built with C# and .NET MAUI, featuring pre-made and randomly generated puzzles together with a reusable game logic API.
 
-> Status: Currently in-development. A beta build is available in Releases.
+> Status: Currently in-development. A beta build is available in [Releases](https://github.com/GiraffeLars/Picross/releases).
 
 <img src="docs/PicrossGame.png" alt="Picross Puzzle being solved" width="500"/>
 
@@ -120,7 +120,7 @@ Features that are currently planned to be added *(in no particular order)*:
 - [x] Random puzzle generation that have a guaranteed solution
 - [x] Automatically cross the remaining blank cells upon line completion
 - [x] Dark mode support
-- [ ] Support for pre-made puzzles
+- [x] Support for pre-made puzzles
 - [ ] Improve player controls on PC
 - [ ] Player statistics
 - [ ] UI improvements
@@ -132,7 +132,7 @@ This project started as a solo learning project, but contributions are welcome. 
 When submitting a pull request, please make note of the following:
 - Keep PRs focussed
 - If you make any changes to the logic, ensure that the tests verify
-- Make sure the project buids and functions as intended
+- Make sure the project builds and functions as intended
 - Keep code documented
 - Try to keep AI generated code at a minimum
 

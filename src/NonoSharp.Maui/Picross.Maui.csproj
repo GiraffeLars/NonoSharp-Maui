@@ -162,7 +162,7 @@
 	  <ProjectReference Include="..\Picross.Game\Picross.Game.csproj" />
 	</ItemGroup>
 
-	<Target Name="GeneratePuzzleLibrary" BeforeTargets="Build">
+	<Target Name="GeneratePuzzleLibrary" BeforeTargets="BeforeBuild">
 		<ItemGroup>
 			<Puzzles Include="$(MSBuildProjectDirectory)/Resources/Raw/Puzzles/*.ns" />
 		</ItemGroup>
@@ -184,5 +184,10 @@
 			File="$(MSBuildProjectDirectory)/Resources/Raw/Puzzles/library.json" 
 			Lines="{;@(Puzzles -> '    &quot;%(id)&quot; : &quot;%(Filename)%(Extension)&quot;', ',%0D%0A');}"
 			Overwrite="true" />
+
+		<ItemGroup>
+			<!-- Add the library as a Maui Asset in case it didn't exist before, avoiding a fetch failure-->
+			<MauiAsset Include="Resources\Raw\Puzzles\library.json" LogicalName="Puzzles/library.json" />
+		</ItemGroup>
 	</Target>
 </Project>

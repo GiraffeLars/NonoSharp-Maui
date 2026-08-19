@@ -58,11 +58,18 @@ public partial class MainPage : ThemedPage
         int margin = 10;
         int height = 50;
 
+        Button premadePuzzles = new() { Text = "Puzzles", Margin=margin, HeightRequest= height };
+        premadePuzzles.Clicked += async (s, e) =>
+        {
+            await Navigation.PushAsync(new SelectionPage());
+        };
+        grid.Add(premadePuzzles, 1, 0);
+
         // Create 3 buttons, 5x5, 10x10, 15x15
         for (int i = 0; i < 3; i++)
         {
             int size = (i + 1) * 5;
-            String text = $"{size}x{size}";
+            String text = $"Random {size}x{size}";
 
             Button but = new() { Text = text, Margin = margin, HeightRequest = height };
 
@@ -71,7 +78,7 @@ public partial class MainPage : ThemedPage
                 await OnGeneratePuzzleButtonClicked(size);
             };
 
-            grid.Add(but, 1, i);
+            grid.Add(but, 1, i+1);
         }
 
         Button settings = new() { Text = "Settings", Margin = margin, HeightRequest = height };
@@ -80,7 +87,7 @@ public partial class MainPage : ThemedPage
             await Navigation.PushAsync(new SettingsPage());
         };
 
-        grid.Add(settings, 1, 3);
+        grid.Add(settings, 1, 4);
     }
 
     private async Task OnGeneratePuzzleButtonClicked(int size)

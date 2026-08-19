@@ -162,4 +162,27 @@
 	  <ProjectReference Include="..\Picross.Game\Picross.Game.csproj" />
 	</ItemGroup>
 
+	<Target Name="GeneratePuzzleLibrary" BeforeTargets="Build">
+		<ItemGroup>
+			<Puzzles Include="$(MSBuildProjectDirectory)/Resources/Raw/Puzzles/*.ns" />
+		</ItemGroup>
+
+		<ItemGroup>
+			<Puzzles>
+				<!-- Parse the ID of the file by splitting the filename on _ and converting to int. -->
+				<!-- Documentation & string operations on metadata:
+					https://learn.microsoft.com/en-us/visualstudio/msbuild/property-functions?view=visualstudio
+					https://stackoverflow.com/questions/5103026/in-msbuild-can-i-use-the-string-replace-function-on-a-metadata-item
+				-->
+				<id>$([System.Int32]::Parse($([System.String]::Copy('%(Filename)').Split('_')[0])))</id>
+			</Puzzles>
+		</ItemGroup>
+
+		<!-- Writes the puzzle as a json. The id is used as key, the filename as value. 
+			Each line has 4 extra spaces for readability, split with a comma and a linebreak (CRLF)-->
+		<WriteLinesToFile 
+			File="$(MSBuildProjectDirectory)/Resources/Raw/Puzzles/library.json" 
+			Lines="{;@(Puzzles -> '    &quot;%(id)&quot; : &quot;%(Filename)%(Extension)&quot;', ',%0D%0A');}"
+			Overwrite="true" />
+	</Target>
 </Project>

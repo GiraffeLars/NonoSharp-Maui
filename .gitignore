@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Puzzle library JSON generated upon MAUI project build
+src/Picross.Maui/Resources/Raw/Puzzles/*.json

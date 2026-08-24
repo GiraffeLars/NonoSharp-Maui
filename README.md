@@ -1,4 +1,5 @@
 # NonoSharp
+[![NuGet Version](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)
 [![Build and Test API project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml)
 [![Build MAUI project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml)
 
@@ -22,8 +23,14 @@ By filling the grid one cell at a time, eventually you reach the solution.
 - **Cross-platform** UI built with MAUI
 
 ## Using the API
-The core logic for the puzzles is located in the *NonoSharp* project, and is **independent** of the MAUI UI.
-This makes it possible to reference in any .NET project.
+Since the core logic is separate from the UI, it can be reused in other projects. To add the API
+to your project, you can install it from [NuGet](https://www.nuget.org/packages/NonoSharp/#readme-body-tab),
+for example by running the following command. This will install the latest version and add it to
+your project.
+```shell
+dotnet add package NonoSharp
+```
+
 Currently supported functions include:
 - Abstracted grid, making it easy to implement in your projects
 - Built-in undo/redo functionality
@@ -39,7 +46,7 @@ using NonoSharp;
 using NonoSharp.Events;
  
 // Creates a new random 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
-// This method is also available asynchronously via GameAPI.CreateRandomPuzzleAsync
+// This method is also available asynchronously via NonogramAPI.CreateRandomPuzzleAsync
 var game = NonogramAPI.CreateRandomPuzzle(10, 10); // (width x height)
  
 // Fill in or cross a cell (coordinates are zero-indexed, (0, 0) is top-left)

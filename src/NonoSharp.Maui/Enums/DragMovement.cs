@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     /// <summary>
     /// Whether the movement when dragging is unlocked, locked vertically or locked horizontally.

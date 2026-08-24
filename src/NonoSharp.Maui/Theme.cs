@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Maui.Graphics;
-using Picross.Maui.Data;
+using NonoSharp.Maui.Data;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     internal class Theme
     {

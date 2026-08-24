@@ -1,7 +1,7 @@
 ﻿using Foundation;
-using Picross.Maui;
+using NonoSharp.Maui;
 
-namespace Picross.Maui.Platforms.MacCatalyst
+namespace NonoSharp.Maui.Platforms.MacCatalyst
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

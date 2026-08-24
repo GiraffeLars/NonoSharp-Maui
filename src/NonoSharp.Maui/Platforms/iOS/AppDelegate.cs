@@ -1,7 +1,7 @@
 ﻿using Foundation;
-using Picross.Maui;
+using NonoSharp.Maui;
 
-namespace Picross.Maui.Platforms.iOS
+namespace NonoSharp.Maui.Platforms.iOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

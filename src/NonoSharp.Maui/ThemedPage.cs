@@ -1,9 +1,9 @@
-﻿using Picross.Maui.Data;
+﻿using NonoSharp.Maui.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     /// <summary>
     /// A <c>ContentPage</c> that automatically changes themes when the system's theme changes.

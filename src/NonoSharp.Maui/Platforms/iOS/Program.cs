@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace Picross.Maui.Platforms.iOS
+namespace NonoSharp.Maui.Platforms.iOS
 {
     public class Program
     {

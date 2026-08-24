@@ -6,12 +6,12 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
-  <Identity Name="giraffelars-picross" Publisher="CN=giraffelars" Version="0.0.0.0" />
+  <Identity Name="nonosharp" Publisher="CN=giraffelars" Version="0.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="27214EE1-4B74-448D-A2AB-0F89A2162FA6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Picross</DisplayName>
+    <DisplayName>NonoSharp</DisplayName>
     <PublisherDisplayName>GiraffeLars</PublisherDisplayName>
     <Logo>$placeholder$.png</Logo>
   </Properties>

@@ -1,9 +1,9 @@
-using Picross.Game;
-using Picross.Maui.Data;
+using NonoSharp;
+using NonoSharp.Maui.Data;
 using System.Diagnostics;
 using System.Text;
 
-namespace Picross.Maui;
+namespace NonoSharp.Maui;
 
 public partial class MainPage : ThemedPage
 {
@@ -99,7 +99,7 @@ public partial class MainPage : ThemedPage
             indicator.IsRunning = true;
             indicator.IsEnabled = true;
             // Change to game page with size x size grid corresponding to button upon click
-            GameAPI api = await GameAPI.CreateRandomPuzzleAsync(size, size);
+            NonogramAPI api = await NonoSharp.NonogramAPI.CreateRandomPuzzleAsync(size, size);
             await Navigation.PushAsync(new GamePage(api));
         }
         finally

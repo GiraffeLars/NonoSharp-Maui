@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using Picross.Maui.Data;
+using NonoSharp.Maui.Data;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     public static class MauiProgram
     {

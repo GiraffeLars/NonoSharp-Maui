@@ -4,11 +4,11 @@
     <BuildType Name="Release" />
     <BuildType Name="Tests" />
   </Configurations>
-  <Project Path="tests/Picross.Game.Tests/Picross.Game.Tests.csproj" Id="74a9d335-a696-4a68-86e8-a69356e548e2">
+  <Project Path="tests/NonoSharp.Tests/NonoSharp.Tests.csproj" Id="74a9d335-a696-4a68-86e8-a69356e548e2">
     <Build Solution="Release|*" Project="false" />
   </Project>
-  <Project Path="src/Picross.Game/Picross.Game.csproj" />
-  <Project Path="src/Picross.Maui/Picross.Maui.csproj" Id="f8824bdc-dee1-44fd-ac95-243e1e9242bc">
+  <Project Path="src/NonoSharp/NonoSharp.csproj" />
+  <Project Path="src/NonoSharp.Maui/NonoSharp.Maui.csproj" Id="f8824bdc-dee1-44fd-ac95-243e1e9242bc">
     <Build Solution="Tests|*" Project="false" />
     <Deploy />
   </Project>

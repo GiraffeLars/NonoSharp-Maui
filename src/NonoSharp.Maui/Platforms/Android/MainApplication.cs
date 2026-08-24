@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace Picross.Maui.Platforms.Android
+namespace NonoSharp.Maui.Platforms.Android
 {
     [Application]
     public class MainApplication : MauiApplication

@@ -1,6 +1,6 @@
-﻿using Picross.Game;
+﻿using NonoSharp;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     internal partial class SelectionPage : ThemedPage
     {
@@ -72,7 +72,7 @@ namespace Picross.Maui
                     try
                     {
                         Stream stream = await GetPuzzleStreamAsync((int)button.CommandParameter);
-                        await Navigation.PushAsync(new GamePage(await GameAPI.LoadPuzzleAsync(stream)));
+                        await Navigation.PushAsync(new GamePage(await NonogramAPI.LoadPuzzleAsync(stream)));
                     }
                     catch (Exception)
                     {

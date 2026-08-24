@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     internal enum FillType
     {

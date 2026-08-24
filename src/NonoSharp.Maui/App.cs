@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 
-namespace Picross.Maui;
+namespace NonoSharp.Maui;
 
 public class App : Application
 {

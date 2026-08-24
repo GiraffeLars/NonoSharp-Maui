@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Puzzle library JSON generated upon MAUI project build
-src/Picross.Maui/Resources/Raw/Puzzles/*.json
+src/NonoSharp.Maui/Resources/Raw/Puzzles/*.json

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Picross.Maui.Data
+namespace NonoSharp.Maui.Data
 {
     public class Settings
     {

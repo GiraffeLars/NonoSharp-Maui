@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace Picross.Maui
+namespace NonoSharp.Maui
 {
     internal static class PuzzleLibrary
     {

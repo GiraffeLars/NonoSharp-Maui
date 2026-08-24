@@ -21,11 +21,11 @@ internal class BoardDrawable : IDrawable
         float boardSize = Math.Min(dirtyRect.Width, dirtyRect.Height);
         cellSize = boardSize / game.Width;
 
-        DrawSquares(canvas);
+        DrawCells(canvas);
         DrawLines(canvas);
     }
 
-    private void DrawSquares(ICanvas canvas)
+    private void DrawCells(ICanvas canvas)
     {
         canvas.FillColor = game.IsPuzzleSolved() ? Theme.SolvedCell : Theme.FilledCell;
         canvas.StrokeColor = Theme.CrossColor;
@@ -35,7 +35,7 @@ internal class BoardDrawable : IDrawable
         {
             for (int y = 0; y < game.Height; y++)
             {
-                if (game.IsSquareEmpty(x, y))
+                if (game.IsCellEmpty(x, y))
                 {
                     continue;
                 }
@@ -45,7 +45,7 @@ internal class BoardDrawable : IDrawable
                 float x1 = x0 + cellSize;
                 float y1 = y0 + cellSize;
 
-                if (game.IsSquareFilled(x, y))
+                if (game.IsCellFilled(x, y))
                 {
                     canvas.FillRectangle(x0, y0, cellSize, cellSize);
                 } else
@@ -122,14 +122,14 @@ internal class BoardDrawable : IDrawable
     }
 
     /// <summary>
-    /// Handles a clicked square by updating its state according to selected mode.
+    /// Handles a clicked cell by updating its state according to selected mode.
     /// </summary>
     /// <param name="x">x coordinate of cell</param>
     /// <param name="y">y coordinate of cell</param>
     public void HandleCell(int x, int y)
     {
 
-        // TODO Rework the whole square handling. This one is getting overly complicated
+        // TODO Rework the whole cell handling. This one is getting overly complicated
         // since we now rely on fill type more than cell status.
 
         if (x < 0 || x >= game.Width || y < 0 || y >= game.Height)
@@ -148,7 +148,7 @@ internal class BoardDrawable : IDrawable
     }
 
     /// <summary>
-    /// Handles a clicked square by updating its state according to selected mode. See also <seealso cref="HandleCell(int, int)"/>.
+    /// Handles a clicked cell by updating its state according to selected mode. See also <seealso cref="HandleCell(int, int)"/>.
     /// </summary>
     /// <param name="cell">The coordinates of the clicked cell (so in cell coordinates)</param>
     public void HandleCell(Point cell)
@@ -159,44 +159,44 @@ internal class BoardDrawable : IDrawable
 
     private void DetermineTouchIntention(int x, int y)
     {
-        if (game.IsSquareFilled(x, y))
+        if (game.IsCellFilled(x, y))
         {
             if (fillType == FillType.FILL)
             {
                 fillType = FillType.EMPTY;
             }
-            // Do not update the fill type if we click a filled square when either cross or empty is selected, keep current one
+            // Do not update the fill type if we click a filled cell when either cross or empty is selected, keep current one
         }
-        else if (game.IsSquareCrossed(x, y))
+        else if (game.IsCellCrossed(x, y))
         {
             if (fillType == FillType.CROSS)
             {
                 fillType = FillType.EMPTY;
             }
-            // Do not update the fill type if we click a crossed square when either fill or empty is selected, keep current one
+            // Do not update the fill type if we click a crossed cell when either fill or empty is selected, keep current one
         }
 
-        // When a empty square is clicked, we should leave the fill type as is.
+        // When a empty cell is clicked, we should leave the fill type as is.
     }
 
     private void SetCell(int x, int y)
     {
         // Do not change already filled cells, as this would introduce a new action to undo
-        if (fillType == FillType.FILL && !game.IsSquareFilled(x, y))
+        if (fillType == FillType.FILL && !game.IsCellFilled(x, y))
         {
             game.FillCell(x, y);
         }
         // Again, do not change crossed cells to cross to avoid introducing new undo actions
-        else if (fillType == FillType.CROSS && !game.IsSquareCrossed(x, y))
+        else if (fillType == FillType.CROSS && !game.IsCellCrossed(x, y))
         {
             game.CrossCell(x, y);
         }
-        else if (fillType == FillType.EMPTY && !game.IsSquareEmpty(x, y))
+        else if (fillType == FillType.EMPTY && !game.IsCellEmpty(x, y))
         {
             // Only empty cells that were part of the intended types to remove
-            // E.g. only empty cells that are filled in if the intention was to empty filled in squares
-            if ((OldFillType == FillType.FILL && game.IsSquareFilled(x, y)) ||
-                (OldFillType == FillType.CROSS && game.IsSquareCrossed(x, y)) )
+            // E.g. only empty cells that are filled in if the intention was to empty filled in cells
+            if ((OldFillType == FillType.FILL && game.IsCellFilled(x, y)) ||
+                (OldFillType == FillType.CROSS && game.IsCellCrossed(x, y)) )
             {
                 game.EmptyCell(x, y);
             }

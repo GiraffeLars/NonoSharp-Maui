@@ -50,7 +50,7 @@ if (game.CanUndo)
 }
  
 // Check individual cell state
-bool isFilled = game.IsSquareFilled(2, 3);
+bool isFilled = game.IsCellFilled(2, 3);
  
 // Check overall progress
 if (game.IsPuzzleSolved())

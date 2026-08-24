@@ -1,5 +1,4 @@
 ﻿using Picross.Game;
-using System;
 
 namespace Picross.Maui
 {
@@ -72,8 +71,8 @@ namespace Picross.Maui
                 {
                     try
                     {
-                        var bytes = await LoadPuzzleAsync((int)button.CommandParameter);
-                        await Navigation.PushAsync(new GamePage(await GameAPI.LoadFromSerializedAsync(bytes)));
+                        Stream stream = await GetPuzzleStreamAsync((int)button.CommandParameter);
+                        await Navigation.PushAsync(new GamePage(await GameAPI.LoadPuzzleAsync(stream)));
                     }
                     catch (Exception)
                     {
@@ -89,16 +88,12 @@ namespace Picross.Maui
             }
         }
 
-        private async Task<byte[]> LoadPuzzleAsync(int i)
+        private async Task<Stream> GetPuzzleStreamAsync(int i)
         {
             string puzzleFilename = await PuzzleLibrary.GetPuzzleFilenameAsync(i);
             var puzzleStream = await FileSystem.OpenAppPackageFileAsync($"Puzzles/{puzzleFilename}");
-            using var ms = new MemoryStream();
-            await puzzleStream.CopyToAsync(ms);
-            puzzleStream.Close();
-            byte[] bytes = ms.ToArray();
-            ms.Close();
-            return bytes;
+            
+            return puzzleStream;
         }
     }
 }

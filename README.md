@@ -1,5 +1,5 @@
 # NonoSharp
-[![NuGet Version](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)
+[![NuGet Version](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)](https://www.nuget.org/packages/NonoSharp/)
 [![Build and Test API project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml)
 [![Build MAUI project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml)
 

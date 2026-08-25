@@ -21,6 +21,7 @@ By filling the grid one cell at a time, eventually you reach the solution.
 - An **API** allowing for game logic to be reused in other projects
 - **Randomly generated puzzles** guaranteed to be uniquely solvable as verified by the built-in solver
 - **Cross-platform** UI built with MAUI
+- **Saving and loading solutions** to/from custom file format
 
 ## Using the API
 Since the core logic is separate from the UI, it can be reused in other projects. To add the API
@@ -39,6 +40,10 @@ Currently supported functions include:
 - Events for cells changing states and the puzzle being solved correctly
 - Generating random uniquely solvable puzzles
 - Loading and saving puzzles to a custom file type
+
+### Documentation
+Documentation for the API is found on this repo's GitHub pages, 
+[here](https://giraffelars.github.io/NonoSharp/).
 
 ### Example usage
 ```csharp

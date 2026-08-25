@@ -24,7 +24,7 @@ By filling the grid one cell at a time, eventually you reach the solution.
 
 ## Using the API
 Since the core logic is separate from the UI, it can be reused in other projects. To add the API
-to your project, you can install it from [NuGet](https://www.nuget.org/packages/NonoSharp/#readme-body-tab),
+to your project, you can install it from [NuGet](https://www.nuget.org/packages/NonoSharp),
 for example by running the following command. This will install the latest version and add it to
 your project.
 ```shell

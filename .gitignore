@@ -364,3 +364,10 @@ FodyWeavers.xsd
 
 # Puzzle library JSON generated upon MAUI project build
 src/NonoSharp.Maui/Resources/Raw/Puzzles/*.json
+
+# DocFX
+_site/
+api/
+docs/_site/
+docs/api/
+docs/obj/

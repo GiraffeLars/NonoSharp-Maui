@@ -93,8 +93,14 @@ jobs:
            -p:PublishSingleFile=true -p:SelfContained=true
            -p:ApplicationDisplayVersion=${{ needs.version.outputs.version }}
            -o ./publish
+
+    - name: Zip exe
+      run: |
+        $zipName = "NonoSharp-v${{ needs.version.outputs.version }}-win-x64.zip"
+        Compress-Archive -Path ./publish/*.exe -Destination $zipName
+
     - name: Release on GitHub
       uses: softprops/action-gh-release@v2
       with:
-        files: ./publish/*.exe
+        files: NonoSharp-v${{ needs.version.outputs.version }}-win-x64.zip
         generate_release_notes: true

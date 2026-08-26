@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NonoSharp.Maui.Data;
+using CommunityToolkit.Maui;
 
 namespace NonoSharp.Maui
 {
@@ -10,6 +11,7 @@ namespace NonoSharp.Maui
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

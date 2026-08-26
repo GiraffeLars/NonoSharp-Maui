@@ -1,0 +1,28 @@
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:TypeArguments="system:String"
+    x:Class="NonoSharp.Maui.GiveTitlePopup">
+
+    <VerticalStackLayout Spacing="6">
+        <Label Text="Give a title to your puzzle. Leave empty to remove the title."
+               FontSize="24"
+               HorizontalOptions="Center"/>
+        <Entry
+            x:Name="TitleEntry"
+            Placeholder="Enter title"
+            FontSize="18"
+            ReturnType="Done"
+            />
+        <Button
+            Text="Apply title"
+            Clicked="OnTitleButtonClicked"/>
+        <Button
+            Text="Cancel and keep previous title"
+            Clicked="OnCancelButtonClicked"/>
+
+    </VerticalStackLayout>
+
+</toolkit:Popup>

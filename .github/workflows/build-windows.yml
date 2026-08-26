@@ -8,8 +8,6 @@ on:
     branches: [ "main" ]
 
 env:
-  GAME_PROJECT: src/NonoSharp/NonoSharp.csproj
-  TEST_PROJECT: tests/NonoSharp.Tests/NonoSharp.Tests.csproj
   MAUI_PROJECT: src/NonoSharp.Maui/NonoSharp.Maui.csproj
 
 jobs:
@@ -43,7 +41,5 @@ jobs:
         dotnet-version: 10.0.x
     - name: Install .NET MAUI workload
       run: dotnet workload install maui
-    - name: Build API project
-      run: dotnet build -c Release ${{ env.GAME_PROJECT }}
     - name: Build MAUI project
       run: dotnet build -c Release -f net10.0-windows10.0.19041.0 ${{ env.MAUI_PROJECT }}

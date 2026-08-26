@@ -1,102 +1,36 @@
-# NonoSharp
-[![NuGet Version](https://img.shields.io/nuget/vpre/NonoSharp?label=NuGet)](https://www.nuget.org/packages/NonoSharp/)
-[![Build and Test API project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/test-api.yml)
-[![Build MAUI project](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml/badge.svg)](https://github.com/GiraffeLars/NonoSharp/actions/workflows/build-windows.yml)
+# NonoSharp Maui
+[![Release Version](https://img.shields.io/github/v/release/GiraffeLars/NonoSharp-Maui?include_prereleases&label=Latest%20Release
+)](https://github.com/GiraffeLars/NonoSharp-Maui/releases)
 
-A cross-platform Nonogram game built with C# and .NET MAUI, featuring pre-made and randomly generated puzzles together with a reusable game logic API.
+A cross-platform Nonogram game built with C# and .NET MAUI, featuring pre-made and randomly generated puzzles together. Built on top of my NonoSharp API, found [here](https://github.com/GiraffeLars/NonoSharp). 
 
-> Status: Currently in-development. A beta build is available in [Releases](https://github.com/GiraffeLars/NonoSharp/releases).
+> Status: Currently in-development. A beta build is available in [Releases](https://github.com/GiraffeLars/NonoSharp-Maui/releases).
 
 <img src="docs/PicrossGame.png" alt="Nonogram Puzzle being solved" width="500"/>
 
 
 ## What is NonoSharp?
-NonoSharp is an API for C#, together with an example UI consumer, allowing for easy creation and playing of [Nonogram](https://en.wikipedia.org/wiki/Nonogram) (also known as Picross) puzzles.
+NonoSharp is an API for C#, together with this UI consumer. The API allows easy creation and playing of [Nonogram](https://en.wikipedia.org/wiki/Nonogram) (also known as Picross) puzzles.
 Nonograms are Japanese puzzles where you fill in a picture based on hints given to you.
 The hints, either on the left-side or top-side of the grid, show how many groups there are in a given row/column and show how many cells each group consists of.
 By filling the grid one cell at a time, eventually you reach the solution.
 
-## Features
-- **A fully functional Nonogram game**, complete with hint checking
-- An **API** allowing for game logic to be reused in other projects
-- **Randomly generated puzzles** guaranteed to be uniquely solvable as verified by the built-in solver
+## Features of the MAUI project
+- **A fully functional Nonogram game**, complete with hint checking, built on top of NonoSharp
 - **Cross-platform** UI built with MAUI
 - **Saving and loading solutions** to/from custom file format
+- **Create** your **own** puzzle with the Puzzle Creator
 
 ## Using the API
-Since the core logic is separate from the UI, it can be reused in other projects. To add the API
-to your project, you can install it from [NuGet](https://www.nuget.org/packages/NonoSharp),
-for example by running the following command. This will install the latest version and add it to
-your project.
-```shell
-dotnet add package NonoSharp
-```
-
-Currently supported functions include:
-- Abstracted grid, making it easy to implement in your projects
-- Built-in undo/redo functionality
-- Checking whether the puzzle is solved
-- A hint system, together with whether a hint is completed by the user.
-- Events for cells changing states and the puzzle being solved correctly
-- Generating random uniquely solvable puzzles
-- Loading and saving puzzles to a custom file type
-
-### Documentation
-Documentation for the API is found on this repo's GitHub pages, 
-[here](https://giraffelars.github.io/NonoSharp/).
-
-### Example usage
-```csharp
-using NonoSharp;
-using NonoSharp.Events;
- 
-// Creates a new random 10x10 puzzle. Generation is guaranteed to produce a solvable puzzle.
-// This method is also available asynchronously via NonogramAPI.CreateRandomPuzzleAsync
-var game = NonogramAPI.CreateRandomPuzzle(10, 10); // (width x height)
- 
-// Fill in or cross a cell (coordinates are zero-indexed, (0, 0) is top-left)
-game.FillCell(2, 3);
-game.CrossCell(0, 0);
- 
-// Moves can be undone/redone
-if (game.CanUndo)
-{
-    game.Undo();
-}
- 
-// Check individual cell state
-bool isFilled = game.IsCellFilled(2, 3);
- 
-// Check overall progress
-if (game.IsPuzzleSolved())
-{
-    Console.WriteLine("Solved!");
-} 
-else 
-{
-    Console.WriteLine("Not solved :(");
-}
-
- 
-// The hints shown alongside the grid (e.g. "3 1" for a row) are available for building your own UI
-Hints[] columnHints = game.ColumnHints;
-Hints[] rowHints = game.RowHints;
-
-// There are also some events provided
-game.CellStateChanged += (s, e) => {
-    Console.WriteLine("A cell has changed states");
-
-    // Include using NonoSharp.Events to gain access to the event args
-};
-```
+For information regarding the API, and using it, see the [NonoSharp GitHub page](https://github.com/GiraffeLars/NonoSharp).
 
 ## Getting Started
 ### Playing
-To play the game build upon the API, install the beta release in the [Releases](https://github.com/GiraffeLars/NonoSharp/releases) tab.
+To play the game build upon the API, install the beta release in the [Releases](https://github.com/GiraffeLars/NonoSharp-Maui/releases) tab.
 Currently, only a build for Windows is available. If you wish to play on a different platform, see the section below.
 
 ### Contributing
-To contribute, clone the project and open it in your prefered IDE, such as Visual Studio. The project makes use of [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) and [sqlite-net-pcl](https://www.nuget.org/packages/sqlite-net-pcl/).
+To contribute, clone the project and open it in your prefered IDE, such as Visual Studio. The project makes use of [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) and [sqlite-net-pcl](https://www.nuget.org/packages/sqlite-net-pcl/), and of course [NonoSharp](https://www.nuget.org/packages/NonoSharp/).
 > **Note:** I cannot guarantee (full) functionality on operating systems other than Windows or Android. While other MAUI platforms are supported, they may contain unexpected issues. 
 > Some features may not be available on all operating systems due to MAUI limitations.
 
@@ -116,19 +50,8 @@ After setting everything up, you can build the MAUI project with
 ```
 dotnet build src/NonoSharp.Maui/NonoSharp.Maui.csproj
 ```
-Similarly, if you wish to build just the API, run
-```
-dotnet build src/NonoSharp/NonoSharp.csproj
-```
 
 Of course, you are also welcome to use your IDE's debugger to build the project and/or play it.
-
-### Unit tests
-The API project is paired with a test suite found in `tests/NonoSharp.Tests`. To run the tests, either use your IDE's unit testing features or run the following:
-```
-dotnet test tests/NonoSharp.Tests/NonoSharp.Tests.csproj
-```
-When contributing, please ensure that the unit tests all pass. These will also be checked when opening a pull request.
 
 ## Roadmap
 Features that are currently planned to be added *(in no particular order)*:
@@ -136,10 +59,10 @@ Features that are currently planned to be added *(in no particular order)*:
 - [x] Automatically cross the remaining blank cells upon line completion
 - [x] Dark mode support
 - [x] Support for pre-made puzzles
+- [x] Player-created puzzles and puzzle creator
 - [ ] Improve player controls on PC
 - [ ] Player statistics
 - [ ] UI improvements
-- [ ] Player-created puzzles and puzzle creator
 
 ## Contribution guidelines
 This project started as a solo learning project, but contributions are welcome. Please open a PR or an issue if you wish to contribute. 

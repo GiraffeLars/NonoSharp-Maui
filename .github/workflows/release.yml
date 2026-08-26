@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  API_PROJECT: src/NonoSharp/NonoSharp.csproj
+  TEST_PROJECT: tests/NonoSharp.Tests/NonoSharp.Tests.csproj
+  MAUI_PROJECT: src/NonoSharp.Maui/NonoSharp.Maui.csproj
+
+jobs:
+  build-and-test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+    - name: Restore dependencies
+      run: |-
+        dotnet restore ${{ env.API_PROJECT }}
+        dotnet restore ${{ env.TEST_PROJECT }}
+    - name: Build API project
+      run: dotnet build -c Release --no-restore ${{ env.API_PROJECT }}
+    - name: Build Test project
+      run: dotnet build -c Release --no-restore ${{ env.TEST_PROJECT }}
+    - name: Test
+      run: dotnet test -c Release --no-build --verbosity normal ${{ env.TEST_PROJECT }}  
+
+  # Extracts version from tag
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+  publish-nuget:
+    # https://learn.microsoft.com/en-gb/nuget/nuget-org/trusted-publishing
+    needs: [build-and-test-api, version]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Pack API
+        run: |
+          dotnet pack ${{ env.API_PROJECT }} -c Release \
+          -p:Version=${{ needs.version.outputs.version }} \
+          -o ./nupkgs
+
+      # Gets API key
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      
+
+      - name: NuGet push
+        run: |
+          dotnet nuget push ./nupkgs/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
+
+
+  release-maui:
+    needs: [build-and-test-api, version]
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+    - name: Install .NET MAUI workload
+      run: dotnet workload install maui
+    - name: Publish Windows build
+      run: dotnet publish ${{ env.MAUI_PROJECT }} -c Release
+           -f net10.0-windows10.0.19041.0
+           -p:PublishSingleFile=true -p:SelfContained=true
+           -p:ApplicationDisplayVersion=${{ needs.version.outputs.version }}
+           -o ./publish
+    - name: Release on GitHub
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./publish/*.exe
+        generate_release_notes: true

@@ -69,31 +69,45 @@ namespace NonoSharp.Maui
                 };
                 button.Clicked += async (s, e) =>
                 {
+                    int puzzleNum = (int)button.CommandParameter;
+                    Stream? stream = null;
+                    NonogramAPI nonogram;
                     try
                     {
-                        using Stream stream = await GetPuzzleStreamAsync((int)button.CommandParameter);
-                        await Navigation.PushAsync(new GamePage(await NonogramAPI.LoadPuzzleAsync(stream)));
-                    }
-                    catch (Exception)
+                        string path = await GetPuzzleFileLocation(puzzleNum);
+                        stream = await FileSystem.OpenAppPackageFileAsync(path);
+                        nonogram = await NonogramAPI.LoadPuzzleAsync(stream);
+                    } catch (Exception)
                     {
-                        await DisplayAlertAsync(
-                            "Puzzle unavailable",
-                            $"Failed to load puzzle {(int)button.CommandParameter + 1}. Try a different puzzle.",
-                            "CLOSE");
+                        await DisplayLoadingFailedAlert(puzzleNum);
+                        return;
                     }
+                    finally
+                    {
+                        stream?.Close();
+                    } 
 
+                    
+                    await Navigation.PushAsync(new GamePage(nonogram));
                 };
 
                 menu.Add(button, i % 5 + 1, i / 5 + 1);
             }
         }
 
-        private async Task<Stream> GetPuzzleStreamAsync(int i)
+        private async Task<string> GetPuzzleFileLocation(int i)
         {
             string puzzleFilename = await PuzzleLibrary.GetPuzzleFilenameAsync(i);
-            var puzzleStream = await FileSystem.OpenAppPackageFileAsync($"Puzzles/{puzzleFilename}");
-            
-            return puzzleStream;
+
+            return $"Puzzles/{puzzleFilename}";
+        }
+
+        private async Task DisplayLoadingFailedAlert(int i)
+        {
+            await DisplayAlertAsync(
+                            "Puzzle unavailable",
+                            $"Failed to load puzzle {(int)i + 1}. Try a different puzzle.",
+                            "CLOSE");
         }
     }
 }

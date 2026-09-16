@@ -5,33 +5,33 @@ using System.Text;
 
 namespace NonoSharp.Maui.Drawables
 {
-    internal class rowHintsDrawable : IDrawable
+    internal class rowCluesDrawable : IDrawable
     {
         private readonly NonogramAPI game;
 
         // The total amount of space a number needs, includes the margin, like a box
         private float numberOffset = 22f;
 
-        // The required Width needed for all the hints. When used in GamePage, this ensures the grid is centered
+        // The required Width needed for all the clues. When used in GamePage, this ensures the grid is centered
         internal float RequiredWidth { get; private set; }
 
-        internal rowHintsDrawable(NonogramAPI game)
+        internal rowCluesDrawable(NonogramAPI game)
         {
             this.game = game;
         }
 
         /// <summary>
-        /// Sets the available spacing for the column hints. Also sets <c>this.RequiredWidth</c>.
+        /// Sets the available spacing for the column clues. Also sets <c>this.RequiredWidth</c>.
         /// </summary>
-        /// <param name="totalWidth">Total width available for the hints, as calculated in GamePage</param>
-        /// <param name="totalHeight">Total height available for the hints, as calculated in GamePage</param>
-        /// <param name="maxHints">Maximum amount of hints in any of the column hints</param>
-        internal void SetAvailableSize(double totalWidth, double totalHeight, int maxHints)
+        /// <param name="totalWidth">Total width available for the clues, as calculated in GamePage</param>
+        /// <param name="totalHeight">Total height available for the clues, as calculated in GamePage</param>
+        /// <param name="maxClues">Maximum amount of clues in any of the column clues</param>
+        internal void SetAvailableSize(double totalWidth, double totalHeight, int maxClues)
         {
             // Calculate spacing between numbers, but cap spacing so they are never too far apart
-            numberOffset = Math.Min((float)(totalWidth / maxHints), 22f);
+            numberOffset = Math.Min((float)(totalWidth / maxClues), 22f);
 
-            RequiredWidth = numberOffset * maxHints;
+            RequiredWidth = numberOffset * maxClues;
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -41,20 +41,20 @@ namespace NonoSharp.Maui.Drawables
 
             for (int y = 0; y < game.Height; y++)
             {
-                Hints hints = game.RowHints[y];
+                Clues clues = game.RowClues[y];
 
-                // Traverse backwards through the hint so that the last hint
+                // Traverse backwards through the clue so that the last clue
                 // is almost touching the grid
-                for (int x = hints.Count - 1; x >= 0; x--)
+                for (int x = clues.Count - 1; x >= 0; x--)
                 {
-                    Hint hint = hints[x];
-                    canvas.FontColor = hint.Completed ? Theme.CompletedHint : Theme.IncompleteHint;
+                    Clue clue = clues[x];
+                    canvas.FontColor = clue.Completed ? Theme.CompletedClue : Theme.IncompleteClue;
 
-                    float xPos = dirtyRect.Width - (hints.Count - x) * numberOffset;
+                    float xPos = dirtyRect.Width - (clues.Count - x) * numberOffset;
                     float yPos = y * colHeight;
 
                     canvas.DrawString(
-                        hint.Number.ToString(),
+                        clue.Number.ToString(),
                         xPos,
                         yPos,
                         textWidth,

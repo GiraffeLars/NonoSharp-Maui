@@ -25,8 +25,8 @@ namespace NonoSharp.Maui
         public static Color SolvedCell => Colors.Green;
         public static Color GridLine => Colors.Gray;
         public static Color CrossColor => IsDarkMode() ? Colors.LightGray : Colors.Black;
-        public static Color IncompleteHint => IsDarkMode() ? Colors.White : Colors.Black;
-        public static Color CompletedHint => Colors.Gray;
+        public static Color IncompleteClue => IsDarkMode() ? Colors.White : Colors.Black;
+        public static Color CompletedClue => Colors.Gray;
         public static Color BackgroundColor => IsDarkMode() ? GetBlackBackground() : Color.FromArgb("#F2F0EF"); // Off-white, grayish
         public static Color PrimaryText => IsDarkMode() ? Colors.White : Colors.Black;
 

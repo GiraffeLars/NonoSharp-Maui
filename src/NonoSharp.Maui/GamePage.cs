@@ -11,15 +11,15 @@ public partial class GamePage : ThemedPage
 {
     private readonly NonogramAPI game;
     private BoardDrawable boardDrawable;
-    private columnHintsDrawable columnHintsDrawable;
-    private rowHintsDrawable rowHintsDrawable;
+    private columnCluesDrawable columnCluesDrawable;
+    private rowCluesDrawable rowCluesDrawable;
 
     private const int BUTTON_HEIGHT = 50;
     private const int BUTTON_MARGIN = 10;
     private const float BOARD_SCREEN_PERCENTAGE = 0.75f;
 
-    private int maxRowHints; // The greatest number of row hints in a row
-    private int maxColumnHints; // The greatest number of column hints in a column
+    private int maxRowClues; // The greatest number of row clues in a row
+    private int maxColumnClues; // The greatest number of column clues in a column
 
     private Button toggleButton;
     private Grid commandButtonsGrid;
@@ -51,7 +51,7 @@ public partial class GamePage : ThemedPage
             InvalidateViews();
         };
 
-        FillHintData();
+        FillClueData();
 
         CreateToggleButton();
         CreateCommandButtons();
@@ -62,10 +62,10 @@ public partial class GamePage : ThemedPage
     }
 
     /// <summary>
-    /// Dynamically calculates the screen space for the grid and hints.
+    /// Dynamically calculates the screen space for the grid and clues.
     /// </summary>
     /// Uses the screen size to calculate the grid size with <c>BOARD_SCREEN_PERCENTAGE</c>
-    /// Calculates the width and height for the hint views, then lets the drawables calculated the total used space
+    /// Calculates the width and height for the clue views, then lets the drawables calculated the total used space
     /// Using that, finalize the drawing.
     /// <param name="width">Screen width</param>
     /// <param name="height">Screen height</param>
@@ -86,34 +86,34 @@ public partial class GamePage : ThemedPage
         views["board"].WidthRequest = boardSize;
 
         double buttonSize = BUTTON_HEIGHT + BUTTON_MARGIN * 2; // margin * 2 as margin is 10 px on both 
-        double availableHintHeight = height - boardSize - buttonSize;
-        double availableHintWidth = width - boardSize;
+        double availableClueHeight = height - boardSize - buttonSize;
+        double availableClueWidth = width - boardSize;
 
-        // Set the hint spacing and calculate required width/height to ensure grid centering
-        columnHintsDrawable.SetAvailableSize(boardSize, availableHintHeight, maxColumnHints);
-        rowHintsDrawable.SetAvailableSize(availableHintWidth, boardSize, maxRowHints);
+        // Set the clue spacing and calculate required width/height to ensure grid centering
+        columnCluesDrawable.SetAvailableSize(boardSize, availableClueHeight, maxColumnClues);
+        rowCluesDrawable.SetAvailableSize(availableClueWidth, boardSize, maxRowClues);
 
-        // Give the hints their allocated screen space
-        views["columnHints"].HeightRequest = columnHintsDrawable.RequiredHeight;
-        views["columnHints"].WidthRequest = boardSize;
+        // Give the clues their allocated screen space
+        views["columnClues"].HeightRequest = columnCluesDrawable.RequiredHeight;
+        views["columnClues"].WidthRequest = boardSize;
 
-        views["rowHints"].HeightRequest = boardSize;
-        views["rowHints"].WidthRequest = rowHintsDrawable.RequiredWidth;
+        views["rowClues"].HeightRequest = boardSize;
+        views["rowClues"].WidthRequest = rowCluesDrawable.RequiredWidth;
 
-        commandButtonsGrid.WidthRequest = rowHintsDrawable.RequiredWidth;
-        undoButton.WidthRequest = rowHintsDrawable.RequiredWidth / 2;
-        redoButton.WidthRequest = rowHintsDrawable.RequiredWidth / 2;
+        commandButtonsGrid.WidthRequest = rowCluesDrawable.RequiredWidth;
+        undoButton.WidthRequest = rowCluesDrawable.RequiredWidth / 2;
+        redoButton.WidthRequest = rowCluesDrawable.RequiredWidth / 2;
 
         InvalidateViews();
     }
 
-    private static int GetMaxHints(Hints[] hints)
+    private static int GetMaxClues(Clues[] clues)
     {
         int max = 0;
 
-        for (int i = 0; i < hints.Length; i++)
+        for (int i = 0; i < clues.Length; i++)
         {
-            int curr = hints[i].Count;
+            int curr = clues[i].Count;
 
             if (max < curr)
             {
@@ -123,33 +123,33 @@ public partial class GamePage : ThemedPage
         return max;
     }
 
-    [MemberNotNull(nameof(maxRowHints), nameof(maxColumnHints))]
-    private void FillHintData()
+    [MemberNotNull(nameof(maxRowClues), nameof(maxColumnClues))]
+    private void FillClueData()
     {
-        maxRowHints = GetMaxHints(game.RowHints);
-        maxColumnHints = GetMaxHints(game.ColumnHints);
+        maxRowClues = GetMaxClues(game.RowClues);
+        maxColumnClues = GetMaxClues(game.ColumnClues);
     }
 
-    [MemberNotNull(nameof(boardDrawable), nameof(columnHintsDrawable), nameof(rowHintsDrawable))]
+    [MemberNotNull(nameof(boardDrawable), nameof(columnCluesDrawable), nameof(rowCluesDrawable))]
     private void CreateViews()
     {
         boardDrawable = new BoardDrawable(game);
-        columnHintsDrawable = new columnHintsDrawable(game);
-        rowHintsDrawable = new rowHintsDrawable(game);
+        columnCluesDrawable = new columnCluesDrawable(game);
+        rowCluesDrawable = new rowCluesDrawable(game);
 
         views.Add("board", new GraphicsView
         {
             Drawable = boardDrawable,
         });
 
-        views.Add("columnHints", new GraphicsView
+        views.Add("columnClues", new GraphicsView
         {
-            Drawable = columnHintsDrawable,
+            Drawable = columnCluesDrawable,
         });
 
-        views.Add("rowHints", new GraphicsView
+        views.Add("rowClues", new GraphicsView
         {
-            Drawable = rowHintsDrawable
+            Drawable = rowCluesDrawable
         });
 
 #if WINDOWS
@@ -174,23 +174,23 @@ public partial class GamePage : ThemedPage
 
             RowDefinitions =
         {
-            new RowDefinition { Height = GridLength.Auto },    // 0: Top hints
+            new RowDefinition { Height = GridLength.Auto },    // 0: Top clues
             new RowDefinition { Height = GridLength.Auto },    // 1: Board
             new RowDefinition { Height = GridLength.Auto }     // 2: Mode button
         },
             ColumnDefinitions =
         {
-            new ColumnDefinition { Width = GridLength.Auto }, // 0: Left hints & undo, redo buttons
+            new ColumnDefinition { Width = GridLength.Auto }, // 0: Left clues & undo, redo buttons
             new ColumnDefinition { Width = GridLength.Auto },                    // 1: Board
         }
         };
 
         // Add children
         mainGrid.Add(views["board"], 1, 1);          // bottom-right
-        mainGrid.Add(views["columnHints"], 1, 0);  // top-right (above board)
-        mainGrid.Add(views["rowHints"], 0, 1);// bottom-left (beside board)
+        mainGrid.Add(views["columnClues"], 1, 0);  // top-right (above board)
+        mainGrid.Add(views["rowClues"], 0, 1);// bottom-left (beside board)
         mainGrid.Add(toggleButton, 1, 2);       // underneath the board
-        mainGrid.Add(commandButtonsGrid, 0, 2);       // underneath left hints
+        mainGrid.Add(commandButtonsGrid, 0, 2);       // underneath left clues
     }
 
 
